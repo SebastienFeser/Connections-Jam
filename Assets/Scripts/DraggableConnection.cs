@@ -25,5 +25,9 @@ public class DraggableConnection : MonoBehaviour
             lineRenderer.SetPosition(0, new Vector3(startPosition.x, startPosition.y, 0f));
             lineRenderer.SetPosition(1, new Vector3(mousePosition.x, mousePosition.y, 0f));
         }
+        if(Input.GetMouseButtonUp(0))
+        {
+            Destroy(gameObject);
+        }
     }
 }
