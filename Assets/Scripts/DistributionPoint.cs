@@ -13,6 +13,7 @@ public class DistributionPoint : MonoBehaviour
     [SerializeField] Transform[] productDemandSpawnPoints;
     GameObject[] demandAroundDP = new GameObject[4];
     [SerializeField] GameObject demandGameObject;
+    Level level;
     public int ProductionDemand
     {
         get { return productDemand; }
@@ -22,6 +23,11 @@ public class DistributionPoint : MonoBehaviour
 
     public bool IsConnectedTo(ProductionPoint productionPoint) { return connections.Contains(productionPoint); }
     public void AddConnection(ProductionPoint productionPoint) { connections.Add(productionPoint); }
+
+    private void Start()
+    {
+        level = FindObjectOfType<Level>();
+    }
 
     private void Update()
     {
