@@ -6,10 +6,17 @@ public class DragConnection : MonoBehaviour
 {
     [SerializeField] GameObject connection;
     [SerializeField] ProductionPoint productionPoint;
-   void OnMouseDown()
+
+    public DraggableConnection createConnection()
     {
-        Debug.Log("down");
         GameObject newConnection = Instantiate(connection);
-        newConnection.GetComponent<DraggableConnection>().SetStartPosition(transform.position, productionPoint);
+        DraggableConnection draggableConnection = newConnection.GetComponent<DraggableConnection>();
+        draggableConnection.SetStartPosition(transform.position, productionPoint);
+        return draggableConnection;
+    }
+
+    void OnMouseDown()
+    {
+        createConnection();
     }
 }

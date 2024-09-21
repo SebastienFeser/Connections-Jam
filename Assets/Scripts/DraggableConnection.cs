@@ -36,11 +36,12 @@ public class DraggableConnection : MonoBehaviour
         return !(hit.collider is null);
     }
 
-    private bool AddConnection(DistributionPoint distributionPoint, float cost)
+    public bool AddConnection(DistributionPoint distributionPoint, float cost)
     {
         bool failure = productionPointOrigin.IsConnectedTo(distributionPoint) || distributionPoint.IsConnectedTo(productionPointOrigin) || Level.playerGang.money - cost < 0;
         if (!failure)
         {
+            lineRenderer.SetPosition(1, distributionPoint.transform.position);
             productionPointOrigin.AddConnection(distributionPoint);
             distributionPoint.AddConnection(productionPointOrigin);
             Level.playerGang.Pay(-cost);
@@ -50,6 +51,10 @@ public class DraggableConnection : MonoBehaviour
 
         return !failure;
     }
+
+    public float Cost(Vector2 targetPosition) { return (targetPosition - startPosition).magnitude * Level.connectionCostPerUnit + Level.connectionBaseCost; }
+    public float Cost(Vector3 targetPosition) { return (targetPosition - new Vector3(startPosition.x, startPosition.y, 0)).magnitude * Level.connectionCostPerUnit + Level.connectionBaseCost; }
+    public float Cost(DistributionPoint distributionPoint) { return Cost(distributionPoint.transform.position); }
 
     private void Update()
     {
@@ -91,11 +96,7 @@ public class DraggableConnection : MonoBehaviour
                         float cost = (hit.transform.position - new Vector3(startPosition.x, startPosition.y, 0)).magnitude * Level.connectionCostPerUnit + Level.connectionBaseCost;
                         UISystem.moneyDisplayUI.DisplayCost(cost);
 
-                        if (AddConnection(distributionPoint, cost))
-                        {
-                            lineRenderer.SetPosition(1, hit.transform.position);
-                            destroy = false;
-                        }
+                        if (AddConnection(distributionPoint, cost)) destroy = false;
                     }
                 }
 

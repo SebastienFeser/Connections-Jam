@@ -4,14 +4,14 @@ using UnityEngine;
 
 public class DistributionPoint : MonoBehaviour
 {
-    int productDemand;
-    int askedProducts;
+    int productDemand { get { return demandAroundDP.Count; } }
+    public int askedProducts;
     [SerializeField] float demandTimer;
     float actualTime = 0;
     [SerializeField] int maximumDemand;
     public List<ProductionPoint> connections = new List<ProductionPoint>();
     [SerializeField] Transform[] productDemandSpawnPoints;
-    GameObject[] demandAroundDP = new GameObject[4];
+    List<GameObject> demandAroundDP = new List<GameObject>();
     [SerializeField] GameObject demandGameObject;
     public int ProductionDemand
     {
@@ -30,13 +30,11 @@ public class DistributionPoint : MonoBehaviour
         {
             if (productDemand < maximumDemand)
             {
-                productDemand++;
-                askedProducts++;
                 SpawnDemand();
             }
             actualTime -= demandTimer;
         }
-        if(askedProducts > 0)
+        if(productDemand > askedProducts)
         {
             RequestGoods();
         }
@@ -47,26 +45,24 @@ public class DistributionPoint : MonoBehaviour
         bool hasAskedDemand = false;
         foreach(ProductionPoint element in connections)
         {
-            hasAskedDemand = element.AskProducts(this);
+            if (element.AskProducts(this)) hasAskedDemand = true;
         }
         if(hasAskedDemand)
         {
-            askedProducts--;
+            askedProducts++;
         }
     }
 
     void SpawnDemand()
     {
-        for (int i = 0; i < demandAroundDP.Length; i++)
-        {
-            if (demandAroundDP[i] == null)
-            {
-                GameObject newDemand = Instantiate(demandGameObject, transform);
-                newDemand.transform.position = productDemandSpawnPoints[i].position;
-                demandAroundDP[i] = newDemand;
-                break;
-            }
-        }
+        GameObject newDemand = Instantiate(demandGameObject, transform);
+        newDemand.transform.position = productDemandSpawnPoints[productDemand].position;
+        demandAroundDP.Add(newDemand);
+    }
+
+    private void Payout()
+    {
+        //...
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -75,21 +71,13 @@ public class DistributionPoint : MonoBehaviour
         {
             if(productDemand > 0)
             {
-                for(int i = demandAroundDP.Length -1; i >= 0; i--)
-                {
-                    if (demandAroundDP[i] != null)
-                    {
-                        Destroy(demandAroundDP[i]);
-                        break;
-                    }
-                }
-                productDemand--;
-                Destroy(collision.gameObject);
+                Destroy(demandAroundDP[productDemand - 1]);
+                demandAroundDP.RemoveAt(productDemand - 1);
+                askedProducts--;
+                Payout();
             }
-            else
-            {
-                Destroy(collision.gameObject);
-            }
+
+            Destroy(collision.gameObject);
         }
     }
 }
