@@ -9,6 +9,7 @@ public class ProductionPoint : MonoBehaviour
     [SerializeField] float productTimer;
     float actualTime = 0;
     [SerializeField] int maximumGoods;
+    [SerializeField] Transform[] productSpawnPoints;
 
     private void Update()
     {
