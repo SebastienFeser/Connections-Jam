@@ -41,11 +41,11 @@ public class Product : MonoBehaviour
             {
                 if(distributionPoint.ProductionDemand > 0)
                 {
-                    Destroy(gameObject);
+                    //Destroy(gameObject);
                 }
                 else
                 {
-                    Destroy(gameObject);
+                    //Destroy(gameObject);
                 }
             }
 

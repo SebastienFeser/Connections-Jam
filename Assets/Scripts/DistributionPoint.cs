@@ -77,5 +77,29 @@ public class DistributionPoint : MonoBehaviour
         }
     }
 
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if(collision.tag == "Product")
+        {
+            if(productDemand > 0)
+            {
+                for(int i = demandAroundDP.Length -1; i >= 0; i--)
+                {
+                    if (demandAroundDP[i] != null)
+                    {
+                        Destroy(demandAroundDP[i]);
+                        break;
+                    }
+                }
+                productDemand--;
+                Destroy(collision.gameObject);
+            }
+            else
+            {
+                Destroy(collision.gameObject);
+            }
+        }
+    }
+
 
 }

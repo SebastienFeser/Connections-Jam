@@ -88,6 +88,8 @@ public class ProductionPoint : MonoBehaviour
             {
                 productsAroundPP[i].GetComponent<Product>().StartMovement(transform, distributionPoint.transform, 1, distributionPoint);
                 productsAroundPP[i] = null;
+                productCount--;
+                break;
             }
         }
     }
