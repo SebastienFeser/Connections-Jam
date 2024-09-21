@@ -28,7 +28,7 @@ public class Product : MonoBehaviour
         move = true;
     }
 
-    private void Start()
+    private void Awake()
     {
         move = false;
     }
