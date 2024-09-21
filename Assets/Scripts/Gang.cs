@@ -13,7 +13,6 @@ public class Gang
     private Owner owner;
     public string name;
     public float money;
-    public string moneyDisplay { get { return money.ToString("C"); } }
 
     public HashSet<ProductionPoint> productionPoints;
     public HashSet<DistributionPoint> distributionPoints;

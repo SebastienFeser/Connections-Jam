@@ -11,18 +11,6 @@ public class DistributionPoint : MonoBehaviour
         get { return productDemand; }
     }
 
-    public bool AddConnection(ProductionPoint productionPoint)
-    {
-        if (!connections.Contains(productionPoint))
-        {
-            connections.Add(productionPoint);
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-    }
-
-
+    public bool IsConnectedTo(ProductionPoint productionPoint) { return connections.Contains(productionPoint); }
+    public void AddConnection(ProductionPoint productionPoint) { connections.Add(productionPoint); }
 }
