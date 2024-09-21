@@ -7,6 +7,7 @@ public class DraggableConnection : MonoBehaviour
     LineRenderer lineRenderer;
     Vector2 startPosition = Vector2.zero;
     Vector2 mousePosition;
+    ProductionPoint productionPointOrigin;
 
     public bool placed;
 
@@ -19,9 +20,10 @@ public class DraggableConnection : MonoBehaviour
         placed = false;
 
     }
-    public void SetStartPosition(Vector2 position)
+    public void SetStartPosition(Vector2 position, ProductionPoint productionPoint)
     {
         startPosition = position;
+        productionPointOrigin = productionPoint;
     }
 
     private bool CheckUnderMouse(out RaycastHit2D hit)
@@ -53,8 +55,15 @@ public class DraggableConnection : MonoBehaviour
 
                         // Add connection to distribution point if it does not exist already
                         // ...
-                        lineRenderer.SetPosition(1, hit.transform.position);
-                        placed = true;
+                        bool hasNoConnection = false;
+                        hasNoConnection = productionPointOrigin.AddConnection(distribution_point);
+                        distribution_point.AddConnection(productionPointOrigin);
+                        if (hasNoConnection)
+                        {
+                            lineRenderer.SetPosition(1, hit.transform.position);
+                            placed = true;
+                        }
+                        else Destroy(gameObject);
                     }
                     else Destroy(gameObject);
                 }
