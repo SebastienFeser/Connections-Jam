@@ -38,6 +38,7 @@ public class Level : MonoBehaviour
 
         foreach (ProductionPoint pp in GetComponentsInChildren<ProductionPoint>())
         {
+            pp.SetOwner(playerGang); // for now
             _productionPoints.Add(pp);
         }
 

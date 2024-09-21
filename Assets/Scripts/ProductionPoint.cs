@@ -15,7 +15,11 @@ public class ProductionPoint : MonoBehaviour
     GameObject[] productsAroundPP = new GameObject[8];
     List<DistributionPoint> waitingDemand = new List<DistributionPoint>();
 
+    public Gang owner;
+
     public float productFrequency { get { return 1 / (productTimer + Mathf.Epsilon); } }
+
+    public void SetOwner(Gang gang) { owner = gang; }
 
     private void Update()
     {

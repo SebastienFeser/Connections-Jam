@@ -8,8 +8,6 @@ public class AI : MonoBehaviour
     private float earningFactor, costFactor, excessFactor;
     private Gang gang;
 
-    private static float productPrice = 10; // for now (should be in distr. point)
-
     private float connectionTimerDuration = 5f;
     private float connectionTimer;
 
@@ -53,7 +51,7 @@ public class AI : MonoBehaviour
             {
                 if (!pp.IsConnectedTo(dp))
                 {
-                    float earning = SimpleFlow(pp, dp, true) * productPrice;
+                    float earning = SimpleFlow(pp, dp, true) * dp.localProductPrice;
                     float cost = (dp.transform.position - pp.transform.position).magnitude * Level.connectionCostPerUnit + Level.connectionBaseCost;
                     float currentReward = earningFactor * earning - costFactor * cost + excessFactor * excess;
 

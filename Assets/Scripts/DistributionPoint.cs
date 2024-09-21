@@ -1,3 +1,5 @@
+using System;
+using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -5,14 +7,18 @@ using UnityEngine;
 public class DistributionPoint : MonoBehaviour
 {
     int productDemand { get { return demandAroundDP.Count; } }
-    public int askedProducts;
+    int askedProducts;
+    public float localProductPrice = 10;
     [SerializeField] float demandTimer;
     float actualTime = 0;
     [SerializeField] int maximumDemand;
     public List<ProductionPoint> connections = new List<ProductionPoint>();
+    public Dictionary<Gang, float> influence = new Dictionary<Gang, float>();
     [SerializeField] Transform[] productDemandSpawnPoints;
     List<GameObject> demandAroundDP = new List<GameObject>();
     [SerializeField] GameObject demandGameObject;
+    
+
     public int ProductionDemand
     {
         get { return productDemand; }
@@ -21,7 +27,21 @@ public class DistributionPoint : MonoBehaviour
     public float demandFrequency { get { return 1 / (demandTimer + Mathf.Epsilon); } }
 
     public bool IsConnectedTo(ProductionPoint productionPoint) { return connections.Contains(productionPoint); }
-    public void AddConnection(ProductionPoint productionPoint) { connections.Add(productionPoint); }
+    public void AddConnection(ProductionPoint productionPoint)
+    {
+        connections.Add(productionPoint);
+        influence[productionPoint.owner] = 1;
+    }
+
+    public void IncrementInfluence(Gang gang, float additionnalInfluence)
+    {
+        influence[gang] += additionnalInfluence;
+    }
+
+    public float GetInfluence(Gang gang)
+    {
+        return influence[gang];
+    }
 
     private void Update()
     {
@@ -62,7 +82,11 @@ public class DistributionPoint : MonoBehaviour
 
     private void Payout()
     {
-        //...
+        float sum = influence.Values.Sum();
+        foreach (KeyValuePair<Gang,float> i in influence)
+        {
+            i.Key.Pay(localProductPrice * i.Value / sum);
+        }
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
