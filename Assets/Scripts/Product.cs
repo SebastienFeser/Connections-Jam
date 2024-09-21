@@ -16,18 +16,19 @@ public class Product : MonoBehaviour
         velocity = newVelocity;
     }
 
-    public void StartMovement(Transform start, Transform destination, float newVelocity, DistributionPoint distributionPoint)
+    public void StartMovement(Transform start, Transform destination, float newVelocity, DistributionPoint newDistributionPoint)
     {
         velocity = newVelocity;
         startTransform = start;
         destinationTransform = destination;
 
         transform.position = startTransform.position;
-        direction = startTransform.position - destinationTransform.position;
+        direction = destinationTransform.position - startTransform.position;
+        distributionPoint = newDistributionPoint;
         move = true;
     }
 
-    private void Start()
+    private void Awake()
     {
         move = false;
     }
@@ -40,11 +41,11 @@ public class Product : MonoBehaviour
             {
                 if(distributionPoint.ProductionDemand > 0)
                 {
-                    Destroy(gameObject);
+                    //Destroy(gameObject);
                 }
                 else
                 {
-                    Destroy(gameObject);
+                    //Destroy(gameObject);
                 }
             }
 

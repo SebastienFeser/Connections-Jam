@@ -5,11 +5,14 @@ using UnityEngine;
 public class ProductionPoint : MonoBehaviour
 {
     int productCount;
-    HashSet<DistributionPoint> connections = new HashSet<DistributionPoint>();
+    public HashSet<DistributionPoint> connections = new HashSet<DistributionPoint>();
     [SerializeField] float productTimer;
     float actualTime = 0;
     [SerializeField] int maximumGoods;
     [SerializeField] Transform[] productSpawnPoints;
+
+    [SerializeField] GameObject productGameObject;
+    GameObject[] productsAroundPP = new GameObject[8];
 
     private void Update()
     {
@@ -18,6 +21,7 @@ public class ProductionPoint : MonoBehaviour
         {
             if (productCount < maximumGoods)
             {
+                SpawnProduct();
                 productCount++;
             }
             actualTime -= productTimer;
@@ -39,5 +43,45 @@ public class ProductionPoint : MonoBehaviour
 
     public bool IsConnectedTo(DistributionPoint distributionPoint) { return connections.Contains(distributionPoint); }
     public void AddConnection(DistributionPoint distributionPoint) { connections.Add(distributionPoint); }
+
+    public void SpawnProduct()
+    {
+        for(int i = 0; i < productsAroundPP.Length; i++)
+        {
+            if (productsAroundPP[i] == null)
+            {
+                GameObject newProduct = Instantiate(productGameObject, transform);
+                newProduct.transform.position = productSpawnPoints[i].position;
+                productsAroundPP[i] = newProduct;
+                break;
+            }
+        }
+    }
+
+    public bool AskProducts(DistributionPoint distributionPoint)
+    {
+        if(productCount > 0)
+        {
+            SendProduct(distributionPoint);
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+    void SendProduct(DistributionPoint distributionPoint)
+    {
+        for (int i = productsAroundPP.Length - 1; i >= 0; i--)
+        {
+            if(productsAroundPP[i] != null)
+            {
+                productsAroundPP[i].GetComponent<Product>().StartMovement(transform, distributionPoint.transform, 1, distributionPoint);
+                productsAroundPP[i] = null;
+                productCount--;
+                break;
+            }
+        }
+    }
 
 }
