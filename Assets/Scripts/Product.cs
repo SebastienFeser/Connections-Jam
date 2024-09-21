@@ -16,7 +16,7 @@ public class Product : MonoBehaviour
         velocity = newVelocity;
     }
 
-    public void StartMovement(Transform start, Transform destination, float newVelocity, DistributionPoint distributionPoint)
+    public void StartMovement(Transform start, Transform destination, float newVelocity, DistributionPoint newDistributionPoint)
     {
         velocity = newVelocity;
         startTransform = start;
@@ -24,6 +24,7 @@ public class Product : MonoBehaviour
 
         transform.position = startTransform.position;
         direction = startTransform.position - destinationTransform.position;
+        distributionPoint = newDistributionPoint;
         move = true;
     }
 

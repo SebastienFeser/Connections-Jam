@@ -11,6 +11,9 @@ public class ProductionPoint : MonoBehaviour
     [SerializeField] int maximumGoods;
     [SerializeField] Transform[] productSpawnPoints;
 
+    [SerializeField] GameObject productGameObject;
+    GameObject[] productsAroundPP = new GameObject[8];
+
     private void Update()
     {
         actualTime += Time.deltaTime;
@@ -18,6 +21,7 @@ public class ProductionPoint : MonoBehaviour
         {
             if (productCount < maximumGoods)
             {
+                SpawnProduct();
                 productCount++;
             }
             actualTime -= productTimer;
@@ -47,6 +51,20 @@ public class ProductionPoint : MonoBehaviour
         else
         {
             return false;
+        }
+    }
+
+    public void SpawnProduct()
+    {
+        for(int i = 0; i < productsAroundPP.Length; i++)
+        {
+            if (productsAroundPP[i] == null)
+            {
+                GameObject newProduct = Instantiate(productGameObject, transform);
+                newProduct.transform.position = productSpawnPoints[i].position;
+                productsAroundPP[i] = newProduct;
+                break;
+            }
         }
     }
 
