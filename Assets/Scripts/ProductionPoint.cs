@@ -14,6 +14,8 @@ public class ProductionPoint : MonoBehaviour
     [SerializeField] GameObject productGameObject;
     GameObject[] productsAroundPP = new GameObject[8];
 
+    public float productFrequency { get { return 1 / (productTimer + Mathf.Epsilon); } }
+
     private void Update()
     {
         actualTime += Time.deltaTime;
