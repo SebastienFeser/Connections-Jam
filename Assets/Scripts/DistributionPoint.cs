@@ -9,7 +9,7 @@ public class DistributionPoint : MonoBehaviour
     [SerializeField] float demandTimer;
     float actualTime = 0;
     [SerializeField] int maximumDemand;
-    List<ProductionPoint> connections = new List<ProductionPoint>();
+    public List<ProductionPoint> connections = new List<ProductionPoint>();
     [SerializeField] Transform[] productDemandSpawnPoints;
     GameObject[] demandAroundDP = new GameObject[4];
     [SerializeField] GameObject demandGameObject;
@@ -17,6 +17,11 @@ public class DistributionPoint : MonoBehaviour
     {
         get { return productDemand; }
     }
+
+    public float demandFrequency { get { return 1 / (demandTimer + Mathf.Epsilon); } }
+
+    public bool IsConnectedTo(ProductionPoint productionPoint) { return connections.Contains(productionPoint); }
+    public void AddConnection(ProductionPoint productionPoint) { connections.Add(productionPoint); }
 
     private void Update()
     {
@@ -34,19 +39,6 @@ public class DistributionPoint : MonoBehaviour
         if(askedProducts > 0)
         {
             RequestGoods();
-        }
-    }
-
-    public bool AddConnection(ProductionPoint productionPoint)
-    {
-        if (!connections.Contains(productionPoint))
-        {
-            connections.Add(productionPoint);
-            return true;
-        }
-        else
-        {
-            return false;
         }
     }
 
@@ -100,6 +92,4 @@ public class DistributionPoint : MonoBehaviour
             }
         }
     }
-
-
 }

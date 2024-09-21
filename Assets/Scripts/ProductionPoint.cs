@@ -5,7 +5,7 @@ using UnityEngine;
 public class ProductionPoint : MonoBehaviour
 {
     int productCount;
-    List<DistributionPoint> connections = new List<DistributionPoint>();
+    public HashSet<DistributionPoint> connections = new HashSet<DistributionPoint>();
     [SerializeField] float productTimer;
     float actualTime = 0;
     [SerializeField] int maximumGoods;
@@ -42,18 +42,8 @@ public class ProductionPoint : MonoBehaviour
         }
     }
 
-    public bool AddConnection(DistributionPoint distributionPoint)
-    {
-        if (!connections.Contains(distributionPoint))
-        {
-            connections.Add(distributionPoint);
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-    }
+    public bool IsConnectedTo(DistributionPoint distributionPoint) { return connections.Contains(distributionPoint); }
+    public void AddConnection(DistributionPoint distributionPoint) { connections.Add(distributionPoint); }
 
     public void SpawnProduct()
     {
