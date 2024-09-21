@@ -68,4 +68,20 @@ public class ProductionPoint : MonoBehaviour
         }
     }
 
+    public bool AskProducts(DistributionPoint distributionPoint)
+    {
+        if(productCount > 0)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+    void SendProducts()
+    {
+
+    }
+
 }
