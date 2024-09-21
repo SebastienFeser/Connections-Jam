@@ -72,6 +72,7 @@ public class ProductionPoint : MonoBehaviour
     {
         if(productCount > 0)
         {
+            SendProduct(distributionPoint);
             return true;
         }
         else
@@ -79,9 +80,16 @@ public class ProductionPoint : MonoBehaviour
             return false;
         }
     }
-    void SendProducts()
+    void SendProduct(DistributionPoint distributionPoint)
     {
-
+        for (int i = productsAroundPP.Length - 1; i >= 0; i--)
+        {
+            if(productsAroundPP[i] != null)
+            {
+                productsAroundPP[i].GetComponent<Product>().StartMovement(transform, distributionPoint.transform, 1, distributionPoint);
+                productsAroundPP[i] = null;
+            }
+        }
     }
 
 }

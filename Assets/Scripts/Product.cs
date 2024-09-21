@@ -23,7 +23,7 @@ public class Product : MonoBehaviour
         destinationTransform = destination;
 
         transform.position = startTransform.position;
-        direction = startTransform.position - destinationTransform.position;
+        direction = destinationTransform.position - startTransform.position;
         distributionPoint = newDistributionPoint;
         move = true;
     }
