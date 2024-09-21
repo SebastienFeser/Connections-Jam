@@ -1,3 +1,5 @@
+using System;
+using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -10,9 +12,12 @@ public class DistributionPoint : MonoBehaviour
     float actualTime = 0;
     [SerializeField] int maximumDemand;
     public List<ProductionPoint> connections = new List<ProductionPoint>();
+    public Dictionary<Gang, float> influence = new Dictionary<Gang, float>();
     [SerializeField] Transform[] productDemandSpawnPoints;
     GameObject[] demandAroundDP = new GameObject[4];
     [SerializeField] GameObject demandGameObject;
+    
+
     public int ProductionDemand
     {
         get { return productDemand; }
@@ -22,6 +27,16 @@ public class DistributionPoint : MonoBehaviour
 
     public bool IsConnectedTo(ProductionPoint productionPoint) { return connections.Contains(productionPoint); }
     public void AddConnection(ProductionPoint productionPoint) { connections.Add(productionPoint); }
+
+    public void IncrementInfluence(Gang gang, float additionnalInfluence)
+    {
+        influence[gang] += additionnalInfluence;
+    }
+
+    public float GetInfluence(Gang gang)
+    {
+        return influence[gang];
+    }
 
     private void Update()
     {
@@ -45,9 +60,9 @@ public class DistributionPoint : MonoBehaviour
     public void RequestGoods()
     {
         bool hasAskedDemand = false;
-        foreach(ProductionPoint element in connections)
+        foreach(Tuple<ProductionPoint, float> element in connections)
         {
-            hasAskedDemand = element.AskProducts(this);
+            hasAskedDemand = element.Item1.AskProducts(this);
         }
         if(hasAskedDemand)
         {
