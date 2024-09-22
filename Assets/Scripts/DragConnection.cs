@@ -17,6 +17,6 @@ public class DragConnection : MonoBehaviour
 
     void OnMouseDown()
     {
-        createConnection();
+        if (productionPoint.owner.IsPlayer()) createConnection();
     }
 }

@@ -16,15 +16,16 @@ public enum DistributionSize
 public class DistributionPoint : MonoBehaviour
 {
     public int productDemand { get { return demandAroundDP.Count; } }
-    public int askedProducts;
-    public float localProductPrice = 10;
+    private int askedProducts;
+    public float productPrice { get { return localProductPrice * (2 + productDemand) / 2; } }
+    private float localProductPrice = 10;
     [SerializeField] float demandTimer;
     float actualTime = 0;
     [SerializeField] int maximumDemand;
     public List<ProductionPoint> connections = new List<ProductionPoint>();
     public Dictionary<Gang, float> influence = new Dictionary<Gang, float>();
     [SerializeField] Transform[] productDemandSpawnPoints;
-    public List<GameObject> demandAroundDP = new List<GameObject>();
+    private List<GameObject> demandAroundDP = new List<GameObject>();
     [SerializeField] GameObject demandGameObject;
 
     public DistributionSize size;
@@ -54,21 +55,25 @@ public class DistributionPoint : MonoBehaviour
                 demandTimer = 15f;
                 upgradeProbability = 0.1f;
                 spreadProbability = 0f;
+                localProductPrice = 10;
                 break;
             case DistributionSize.small:
                 demandTimer = 10f;
                 upgradeProbability = 0.05f;
                 spreadProbability = 0f;
+                localProductPrice = 15;
                 break;
             case DistributionSize.medium:
                 demandTimer = 5f;
                 upgradeProbability = 0.01f;
                 spreadProbability = 0.05f;
+                localProductPrice = 20;
                 break;
             case DistributionSize.large:
                 demandTimer = 2f;
                 upgradeProbability = 0f;
                 spreadProbability = 0.1f;
+                localProductPrice = 30;
                 break;
         }
     }
@@ -193,13 +198,19 @@ public class DistributionPoint : MonoBehaviour
         float sum = influence.Values.Sum();
         foreach (KeyValuePair<Gang,float> i in influence)
         {
-            i.Key.Pay(localProductPrice * i.Value / sum);
+            i.Key.Pay(productPrice * i.Value / sum);
         }
 
-        IncrementInfluence(gang, localProductPrice * influence[gang] / sum); // increase influence
+        IncrementInfluence(gang, productPrice * influence[gang] / sum); // increase influence
 
         if (UnityEngine.Random.Range(0f,1f) < upgradeProbability) Upgrade(); // random upgrade
         if (UnityEngine.Random.Range(0f, 1f) < spreadProbability) Level.Spread(this); // random spread
+    }
+
+    public float Earning(Gang gang, float additionalInfluence = 0)
+    {
+        float sum = influence.Values.Sum() + additionalInfluence;
+        return productPrice * (influence[gang] + additionalInfluence) / sum;
     }
 
     public void ReceiveProduct(Gang gang)

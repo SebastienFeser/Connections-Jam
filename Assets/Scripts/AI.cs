@@ -3,26 +3,34 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 
+public enum InvestmentProfile { safe, risky }
+
 public class AI : MonoBehaviour
 {
     private float earningFactor, costFactor, excessFactor;
+    private InvestmentProfile profile;
     private Gang gang;
 
     private float connectionTimerDuration = 5f;
     private float initialTimerDuration = 3f;
     private float replanTimerDuration = 1f;
-    private float timer;
+    private float investmentTimerDuration = 20f;
+    private float timer, investmentTimer;
+
+    private float deltaInvestment = 25f;
 
     private bool activated = false;
 
-    public void SetGang(Gang gang, float earningFactor, float costFactor, float excessFactor)
+    public void SetGang(Gang gang, float earningFactor = 8f, float costFactor = 0.05f, float excessFactor = 1f, InvestmentProfile profile = InvestmentProfile.risky)
     {
         this.gang = gang;
         this.earningFactor = earningFactor;
         this.costFactor = costFactor;
         this.excessFactor = excessFactor;
+        this.profile = profile;
 
         timer = initialTimerDuration;
+        investmentTimer = investmentTimerDuration;
         activated = true;
     }
 
@@ -58,7 +66,7 @@ public class AI : MonoBehaviour
             {
                 if (!pp.IsConnectedTo(dp))
                 {
-                    float earning = SimpleFlow(pp, dp, true) * dp.localProductPrice;
+                    float earning = SimpleFlow(pp, dp, true) * dp.productPrice;
                     float cost = (dp.transform.position - pp.transform.position).magnitude * Level.connectionCostPerUnit + Level.connectionBaseCost;
                     float currentReward = earningFactor * earning - costFactor * cost + excessFactor * excess;
 
@@ -75,12 +83,70 @@ public class AI : MonoBehaviour
         return maxReward;
     }
 
+    private float PlanInvestment(out DistributionPoint distributionPoint, out float investment)
+    {
+        HashSet<DistributionPoint> distributionPoints = new HashSet<DistributionPoint>();
+        foreach (ProductionPoint pp in gang.productionPoints) distributionPoints.UnionWith(pp.connections);
+
+        distributionPoint = null;
+        investment = 0;
+        float maxReward = Mathf.NegativeInfinity;
+
+        foreach (DistributionPoint dp in distributionPoints)
+        {
+            for (int i = 0; i < Mathf.FloorToInt(Mathf.Min(gang.money, maxInvestment()) / deltaInvestment); i++)
+            {
+                float deltaEarning = dp.Earning(gang, i*deltaInvestment) - dp.Earning(gang);
+                float currentReward = earningFactor * deltaEarning - i*deltaInvestment;
+
+                if (currentReward > maxReward)
+                {
+                    distributionPoint = dp;
+                    investment = i * deltaInvestment;
+                    maxReward = currentReward;
+                }
+            }
+        }
+
+        return maxReward;
+    }
+
+    private float maxInvestment()
+    {
+        switch(profile)
+        {
+            case InvestmentProfile.safe:
+                return 100f;
+            default:
+            case InvestmentProfile.risky:
+                return gang.money;
+        }
+    }
+
     private void play()
     {
+        // invest
+        if (investmentTimer <= 0)
+        {
+            float projectedReward = PlanInvestment(out DistributionPoint distributionPoint, out float investment);
+            if (projectedReward > 0)
+            {
+                if (gang.Pay(-investment))
+                {
+                    Debug.Log(gang.name + " invested!");
+                    distributionPoint.IncrementInfluence(gang, investment);
+                    investmentTimer = investmentTimerDuration;
+                }
+                else investmentTimer = replanTimerDuration;
+            }
+            else investmentTimer = replanTimerDuration;
+        }
+
+        // create a connection
         if (gang.money >= Level.connectionBaseCost && timer <= 0)
         {
             float projectedReward = PlanConnection(out ProductionPoint productionPoint, out DistributionPoint distributionPoint);
-            if (projectedReward > Mathf.NegativeInfinity)
+            if (projectedReward > 0)
             {
                 DraggableConnection draggableConnection = productionPoint.GetComponent<DragConnection>().createConnection();
                 float cost = draggableConnection.Cost(distributionPoint.transform.position);
@@ -106,6 +172,7 @@ public class AI : MonoBehaviour
         if (activated)
         {
             if (timer > 0) timer -= Time.deltaTime;
+            if (investmentTimer > 0) investmentTimer -= Time.deltaTime;
             play();
         }
     }

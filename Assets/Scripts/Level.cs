@@ -37,7 +37,7 @@ public class Level : MonoBehaviour
     {
         _adversaryGangs.Add(gang);
         GameObject aiGang = Instantiate(aiAgent, transform);
-        aiGang.GetComponent<AI>().SetGang(gang, 8f, 0.1f, 0f);
+        aiGang.GetComponent<AI>().SetGang(gang, 8f, 0.05f, 1f);
     }
 
     private void InitializePoints()
