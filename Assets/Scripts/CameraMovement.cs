@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class CameraMovement : MonoBehaviour
 {
@@ -11,10 +12,19 @@ public class CameraMovement : MonoBehaviour
     [SerializeField] float minimumZoom;
     [SerializeField] float maximumZoom;
 
+    PlayerInput playerInput;
+
+    InputAction zoomAction;
+
+    private void Start()
+    {
+        playerInput = GetComponent<PlayerInput>();
+        zoomAction = playerInput.actions.FindAction("Zoom");
+    }
     private void Update()
     {
         MouseCameraMovement();
-        //Zoom();
+        Zoom();
     }
 
     private void MouseCameraMovement()
@@ -33,7 +43,8 @@ public class CameraMovement : MonoBehaviour
 
     private void Zoom()
     {
-        float newSize = camera.orthographicSize + zoomStep * Input.GetAxis("Mouse ScrollWheel");
+        //Debug.Log(Input.mouseScrollDelta.y);
+        float newSize = camera.orthographicSize + zoomStep * -Input.mouseScrollDelta.y;
         camera.orthographicSize = Mathf.Clamp(newSize, minimumZoom, maximumZoom);
     }
 
