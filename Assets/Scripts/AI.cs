@@ -8,7 +8,16 @@ public class AI : MonoBehaviour
     private float earningFactor, costFactor, excessFactor;
     private Gang gang;
 
-    private static float productPrice = 10; // for now
+    private float connectionTimerDuration = 5f;
+    private float connectionTimer;
+
+    public void SetGang(Gang gang, float earningFactor, float costFactor, float excessFactor)
+    {
+        this.gang = gang;
+        this.earningFactor = earningFactor;
+        this.costFactor = costFactor;
+        this.excessFactor = excessFactor;
+    }
 
     private float SimpleFlow(ProductionPoint productionPoint, DistributionPoint distributionPoint, bool addPoint = false) // estimate flow between two nodes using one-step approximation
     {
@@ -42,7 +51,7 @@ public class AI : MonoBehaviour
             {
                 if (!pp.IsConnectedTo(dp))
                 {
-                    float earning = SimpleFlow(pp, dp, true) * productPrice;
+                    float earning = SimpleFlow(pp, dp, true) * dp.localProductPrice;
                     float cost = (dp.transform.position - pp.transform.position).magnitude * Level.connectionCostPerUnit + Level.connectionBaseCost;
                     float currentReward = earningFactor * earning - costFactor * cost + excessFactor * excess;
 
@@ -57,5 +66,34 @@ public class AI : MonoBehaviour
         }
 
         return maxReward;
+    }
+
+    private void play()
+    {
+        if (gang.money >= Level.connectionBaseCost && connectionTimer <= 0)
+        {
+            float projectedReward = PlanConnection(out ProductionPoint productionPoint, out DistributionPoint distributionPoint);
+            if (projectedReward > 0)
+            {
+                DraggableConnection draggableConnection = productionPoint.GetComponent<DragConnection>().createConnection();
+                float cost = draggableConnection.Cost(distributionPoint.transform.position);
+                if (draggableConnection.AddConnection(distributionPoint, cost))
+                {
+                    // success
+                    connectionTimer = connectionTimerDuration;
+                }
+                else
+                {
+                    // not enough money
+                }
+            }
+        }
+
+    }
+
+    private void Update()
+    {
+        if (connectionTimer > 0) connectionTimer -= Time.deltaTime;
+        play();
     }
 }

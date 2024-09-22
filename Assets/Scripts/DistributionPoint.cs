@@ -6,15 +6,16 @@ using UnityEngine;
 
 public class DistributionPoint : MonoBehaviour
 {
-    int productDemand;
+    int productDemand { get { return demandAroundDP.Count; } }
     int askedProducts;
+    public float localProductPrice = 10;
     [SerializeField] float demandTimer;
     float actualTime = 0;
     [SerializeField] int maximumDemand;
     public List<ProductionPoint> connections = new List<ProductionPoint>();
     public Dictionary<Gang, float> influence = new Dictionary<Gang, float>();
     [SerializeField] Transform[] productDemandSpawnPoints;
-    GameObject[] demandAroundDP = new GameObject[4];
+    List<GameObject> demandAroundDP = new List<GameObject>();
     [SerializeField] GameObject demandGameObject;
     
 
@@ -26,7 +27,11 @@ public class DistributionPoint : MonoBehaviour
     public float demandFrequency { get { return 1 / (demandTimer + Mathf.Epsilon); } }
 
     public bool IsConnectedTo(ProductionPoint productionPoint) { return connections.Contains(productionPoint); }
-    public void AddConnection(ProductionPoint productionPoint) { connections.Add(productionPoint); }
+    public void AddConnection(ProductionPoint productionPoint)
+    {
+        connections.Add(productionPoint);
+        influence[productionPoint.owner] = 1;
+    }
 
     public void IncrementInfluence(Gang gang, float additionnalInfluence)
     {
@@ -45,13 +50,11 @@ public class DistributionPoint : MonoBehaviour
         {
             if (productDemand < maximumDemand)
             {
-                productDemand++;
-                askedProducts++;
                 SpawnDemand();
             }
             actualTime -= demandTimer;
         }
-        if(askedProducts > 0)
+        if(productDemand > askedProducts)
         {
             RequestGoods();
         }
@@ -62,25 +65,27 @@ public class DistributionPoint : MonoBehaviour
         bool hasAskedDemand = false;
         foreach(ProductionPoint element in connections)
         {
-            hasAskedDemand = element.AskProducts(this);
+            if (element.AskProducts(this)) hasAskedDemand = true;
         }
         if(hasAskedDemand)
         {
-            askedProducts--;
+            askedProducts++;
         }
     }
 
     void SpawnDemand()
     {
-        for (int i = 0; i < demandAroundDP.Length; i++)
+        GameObject newDemand = Instantiate(demandGameObject, transform);
+        newDemand.transform.position = productDemandSpawnPoints[productDemand].position;
+        demandAroundDP.Add(newDemand);
+    }
+
+    private void Payout()
+    {
+        float sum = influence.Values.Sum();
+        foreach (KeyValuePair<Gang,float> i in influence)
         {
-            if (demandAroundDP[i] == null)
-            {
-                GameObject newDemand = Instantiate(demandGameObject, transform);
-                newDemand.transform.position = productDemandSpawnPoints[i].position;
-                demandAroundDP[i] = newDemand;
-                break;
-            }
+            i.Key.Pay(localProductPrice * i.Value / sum);
         }
     }
 
@@ -90,21 +95,13 @@ public class DistributionPoint : MonoBehaviour
         {
             if(productDemand > 0)
             {
-                for(int i = demandAroundDP.Length -1; i >= 0; i--)
-                {
-                    if (demandAroundDP[i] != null)
-                    {
-                        Destroy(demandAroundDP[i]);
-                        break;
-                    }
-                }
-                productDemand--;
-                Destroy(collision.gameObject);
+                Destroy(demandAroundDP[productDemand - 1]);
+                demandAroundDP.RemoveAt(productDemand - 1);
+                askedProducts--;
+                Payout();
             }
-            else
-            {
-                Destroy(collision.gameObject);
-            }
+
+            Destroy(collision.gameObject);
         }
     }
 }

@@ -13,8 +13,13 @@ public class ProductionPoint : MonoBehaviour
 
     [SerializeField] GameObject productGameObject;
     GameObject[] productsAroundPP = new GameObject[8];
+    List<DistributionPoint> waitingDemand = new List<DistributionPoint>();
+
+    public Gang owner;
 
     public float productFrequency { get { return 1 / (productTimer + Mathf.Epsilon); } }
+
+    public void SetOwner(Gang gang) { owner = gang; }
 
     private void Update()
     {
@@ -64,11 +69,35 @@ public class ProductionPoint : MonoBehaviour
     {
         if(productCount > 0)
         {
-            SendProduct(distributionPoint);
-            return true;
+            if (waitingDemand.Count == 0)
+            {
+                SendProduct(distributionPoint);
+                return true;
+            }
+            else
+            {
+                if(waitingDemand[0] == distributionPoint)
+                {
+                    SendProduct(distributionPoint);
+                    waitingDemand.RemoveAt(0);
+                    return true;
+                }
+                else
+                {
+                    if (!waitingDemand.Contains(distributionPoint))
+                    {
+                        waitingDemand.Add(distributionPoint);
+                    }
+                    return false;
+                }
+            }
         }
         else
         {
+            if (!waitingDemand.Contains(distributionPoint))
+            {
+                waitingDemand.Add(distributionPoint);
+            }
             return false;
         }
     }
