@@ -15,6 +15,10 @@ public class DistributionPointUI : MonoBehaviour
     public TextMeshProUGUI influenceSummary;
     public DistributionPoint distributionPoint;
 
+    public GameObject policeSummary;
+    public GameObject prefabText;
+    public GameObject prefabPoliceIcon;
+
     //influence output timing
     private float influenceOutputAppearanceTime;
     private float influenceOutputTimer;
@@ -43,7 +47,6 @@ public class DistributionPointUI : MonoBehaviour
             buyInfluenceOutput.text = "Your transaction has been accepted.";
 
             distributionPoint.IncrementInfluence(Level.playerGang, result);
-            updateInfluence();
             
         }
         else
@@ -69,8 +72,14 @@ public class DistributionPointUI : MonoBehaviour
         // 3) Add a new transaction to the list (need to define what is a transaction) (Not necessary?)
         // 4) Update influence summary
     }
+    private void hideUI()
+    {
+        influenceMoneyInput.text = "";
+        buyInfluenceOutput.gameObject.SetActive(false);
+        this.gameObject.SetActive(false);
+    }
 
-    private void updateInfluence()
+    public void updateInfluence()
     {
         influenceSummary.text = "";
         if(distributionPoint.influence.Count != 0)
@@ -87,13 +96,35 @@ public class DistributionPointUI : MonoBehaviour
                 influenceSummary.text += "<color=#" + gang_color + ">" + gang_influence.Key.name + "</color >" + ": " + gang_influence.Value.ToString() + " (" + ((gang_influence.Value / total_influence) * 100).ToString() + "%) <br>";
             }
         }
-    }
 
-    private void hideUI()
-    {
-        influenceMoneyInput.text = "";
-        buyInfluenceOutput.gameObject.SetActive(false);
-        this.gameObject.SetActive(false);
+        foreach(Transform child in policeSummary.transform)
+        {
+            Destroy(child.gameObject);
+        }
+
+        float offest_y = 0;
+        foreach (KeyValuePair<Gang, int> police_value in distributionPoint.policeValue)
+        {
+            var newText = Instantiate(prefabText);
+            newText.transform.parent = policeSummary.transform;
+            newText.transform.localPosition = new Vector3(60, 0 + offest_y);
+            string gang_color = police_value.Key.color.ToHexString();
+            newText.GetComponent<TextMeshProUGUI>().text = "<color=#" + gang_color + ">" + police_value.Key.name + "</color >";
+
+            float offset_x = 0;
+            int police_value_temp = police_value.Value;
+            while(police_value_temp > 0)
+            {
+                var newIcon = Instantiate(prefabPoliceIcon);
+                newIcon.transform.parent = policeSummary.transform;
+                newIcon.transform.localPosition = new Vector3(130 + offset_x, 15 + offest_y);
+
+                offset_x += 40f;
+                police_value_temp -= 100;
+            }
+
+            offest_y += -35f;
+        }
     }
 
     public void DisplayUI(DistributionPoint newDistributionPoint)
@@ -101,8 +132,6 @@ public class DistributionPointUI : MonoBehaviour
         distributionPoint = newDistributionPoint;
 
         updateInfluence();
-        //Modify title
-
 
         this.gameObject.SetActive(true);
     }

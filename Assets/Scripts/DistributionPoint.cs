@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Unity.Burst.CompilerServices;
+using UnityEngine.InputSystem;
 
 public enum DistributionSize
 {
@@ -29,6 +30,10 @@ public class DistributionPoint : MonoBehaviour
     [SerializeField] GameObject demandGameObject;
 
     public DistributionSize size;
+
+    public Dictionary<Gang, int> policeValue = new Dictionary<Gang, int>();
+    private Dictionary<Gang, float> policeTime = new Dictionary<Gang, float>();
+    private float policeTimer = 3f;
 
     private float upgradeProbability = 0f;
     private float spreadProbability = 0f;
@@ -117,6 +122,9 @@ public class DistributionPoint : MonoBehaviour
     public void AddConnection(ProductionPoint productionPoint)
     {
         connections.Add(productionPoint);
+        influence[productionPoint.owner] = 1;
+        policeValue[productionPoint.owner] = 0;
+        policeTime[productionPoint.owner] = 0;
         influence[productionPoint.owner] = Level.connectionBaseCost;
 
         for (int i = 0; i < askedProducts; i++) productionPoint.AskProducts(this); // request from new source too
@@ -125,6 +133,29 @@ public class DistributionPoint : MonoBehaviour
     public void IncrementInfluence(Gang gang, float additionnalInfluence)
     {
         influence[gang] += additionnalInfluence;
+
+        //Comportement de la police:
+        if (additionnalInfluence >= 100f)
+        {
+            policeValue[gang] += 100;
+        }
+        else
+        {
+            float threshold = UnityEngine.Random.Range(0f, 100f);
+            if(threshold < additionnalInfluence)
+            {
+                policeValue[gang] += 100;
+            }
+        }
+
+        if(policeValue[gang] >= 300) //Le gang perd 1/2 de ce qu'il a mis et le point perd un niveau de distributionSize
+        {
+            policeValue[gang] = 0;
+            influence[gang] /= 2;
+            Downgrade();
+        }
+
+        UISystem.distributionPointUI.updateInfluence();
     }
 
     public float GetInfluence(Gang gang)
@@ -156,9 +187,6 @@ public class DistributionPoint : MonoBehaviour
         Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         Ray ray = new Ray(new Vector3(mousePosition.x, mousePosition.y, -0.1f), Vector3.forward);
         RaycastHit2D hit = Physics2D.GetRayIntersection(ray, 1f, 1 << LayerMask.NameToLayer("Default"));
-
-        
-
         if (Input.GetMouseButtonDown(0) && !(hit.collider is null))
         {
             DistributionPoint distrib;
@@ -168,6 +196,21 @@ public class DistributionPoint : MonoBehaviour
                 if (hit.collider.gameObject.GetComponent<DistributionPoint>().Equals(this))
                 {
                     OpenDistribUI();
+                }
+            }
+        }
+
+        //Police control
+        foreach(Gang g in influence.Keys)
+        {
+            if (policeValue[g] > 0) //Le gang est surveillé par la police
+            {
+                policeTime[g] += Time.deltaTime;
+                if (policeTime[g] > policeTimer)
+                {
+                    policeValue[g] -= 20;
+                    UISystem.distributionPointUI.updateInfluence();
+                    policeTime[g] = 0f;
                 }
             }
         }

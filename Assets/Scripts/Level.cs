@@ -26,7 +26,7 @@ public class Level : MonoBehaviour
     private void InitializeGangs()
     {
         // arbitrary values for now
-        _playerGang = new Gang("Milo's Club", 200, Color.green, true);
+        _playerGang = new Gang("Milo's Club", 1000, Color.green, true);
 
         _adversaryGangs = new List<Gang>();
         createAIGang(new Gang("MegaCorp Inc. (TM)", 500, Color.yellow));
