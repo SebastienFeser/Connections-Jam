@@ -19,7 +19,12 @@ public class ProductionPoint : MonoBehaviour
 
     public float productFrequency { get { return 1 / (productTimer + Mathf.Epsilon); } }
 
-    public void SetOwner(Gang gang) { owner = gang; }
+    public void SetOwner(Gang gang)
+    {
+        owner = gang;
+        owner.AddProductionPoint(this);
+        GetComponent<SpriteRenderer>().color = owner.color;
+    }
 
     private void Update()
     {

@@ -9,7 +9,11 @@ public class AI : MonoBehaviour
     private Gang gang;
 
     private float connectionTimerDuration = 5f;
-    private float connectionTimer;
+    private float initialTimerDuration = 3f;
+    private float replanTimerDuration = 1f;
+    private float timer;
+
+    private bool activated = false;
 
     public void SetGang(Gang gang, float earningFactor, float costFactor, float excessFactor)
     {
@@ -17,6 +21,9 @@ public class AI : MonoBehaviour
         this.earningFactor = earningFactor;
         this.costFactor = costFactor;
         this.excessFactor = excessFactor;
+
+        timer = initialTimerDuration;
+        activated = true;
     }
 
     private float SimpleFlow(ProductionPoint productionPoint, DistributionPoint distributionPoint, bool addPoint = false) // estimate flow between two nodes using one-step approximation
@@ -70,30 +77,37 @@ public class AI : MonoBehaviour
 
     private void play()
     {
-        if (gang.money >= Level.connectionBaseCost && connectionTimer <= 0)
+        if (gang.money >= Level.connectionBaseCost && timer <= 0)
         {
             float projectedReward = PlanConnection(out ProductionPoint productionPoint, out DistributionPoint distributionPoint);
-            if (projectedReward > 0)
+            Debug.Log(projectedReward);
+            if (projectedReward > Mathf.NegativeInfinity)
             {
                 DraggableConnection draggableConnection = productionPoint.GetComponent<DragConnection>().createConnection();
                 float cost = draggableConnection.Cost(distributionPoint.transform.position);
                 if (draggableConnection.AddConnection(distributionPoint, cost))
                 {
                     // success
-                    connectionTimer = connectionTimerDuration;
+                    timer = connectionTimerDuration;
                 }
                 else
                 {
-                    // not enough money
+                    // not enough money or failure
+                    timer = replanTimerDuration;
+                    Destroy(draggableConnection.gameObject);
                 }
             }
+            else timer = replanTimerDuration;
         }
 
     }
 
     private void Update()
     {
-        if (connectionTimer > 0) connectionTimer -= Time.deltaTime;
-        play();
+        if (false && activated)
+        {
+            if (timer > 0) timer -= Time.deltaTime;
+            play();
+        }
     }
 }
