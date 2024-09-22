@@ -28,18 +28,49 @@ public class Level : MonoBehaviour
     private void InitializeGangs()
     {
         // arbitrary values for now
-        _playerGang = new Gang("Milo's Club", 200, Color.green, true);
+        _playerGang = new Gang("Milo's Club", 200, ColorTag.green, true);
 
         _adversaryGangs = new List<Gang>();
-        createAIGang(new Gang("MegaCorp Inc. (TM)", 500, Color.yellow));
-        createAIGang(new Gang("Cosa Nostradamus", 300, Color.red));
+        createAIGang(new Gang("MegaCorp Inc. (TM)", 500, ColorTag.yellow));
+        createAIGang(new Gang("Cosa Nostradamus", 300, ColorTag.red));
     }
 
     private void createAIGang(Gang gang)
     {
         _adversaryGangs.Add(gang);
         GameObject aiGang = Instantiate(aiAgent, transform);
-        aiGang.GetComponent<AI>().SetGang(gang, 8f, 0.05f, 1f);
+        AIConfig(gang.color, out float earningFactor, out float costFactor, out float excessFactor, out InvestmentProfile profile);
+        aiGang.GetComponent<AI>().SetGang(gang, earningFactor, costFactor, excessFactor, profile);
+    }
+
+    private void AIConfig(ColorTag color, out float earningFactor, out float costFactor, out float excessFactor, out InvestmentProfile profile)
+    {
+        earningFactor = 8f;
+        costFactor = 0.05f;
+        excessFactor = 1f;
+        profile = InvestmentProfile.risky;
+
+        switch (color)
+        {
+            case ColorTag.red:
+                earningFactor = 12f;
+                costFactor = 0.05f;
+                excessFactor = 1f;
+                profile = InvestmentProfile.safe;
+                break;
+            case ColorTag.yellow:
+                earningFactor = 8f;
+                costFactor = 0.05f;
+                excessFactor = 0f;
+                profile = InvestmentProfile.risky;
+                break;
+            case ColorTag.blue:
+                earningFactor = 8f;
+                costFactor = 0f;
+                excessFactor = 0f;
+                profile = InvestmentProfile.safe;
+                break;
+        }
     }
 
     private void InitializePoints()

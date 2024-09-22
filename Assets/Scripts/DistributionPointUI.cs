@@ -115,8 +115,8 @@ public class DistributionPointUI : MonoBehaviour
 
                 foreach (KeyValuePair<Gang, float> gang_influence in distributionPoint.influence)
                 {
-                    string gang_color = gang_influence.Key.color.ToHexString();
-                    influenceSummary.text += "<color=#" + gang_color + ">" + gang_influence.Key.name + "</color >" + ": " + gang_influence.Value.ToString() + " (" + ((gang_influence.Value / total_influence) * 100).ToString() + "%) <br>";
+                    string gang_color = Gang.GetColor(gang_influence.Key.color).ToHexString();
+                    influenceSummary.text += "<color=#" + gang_color + ">" + gang_influence.Key.name + "</color >" + ": " + gang_influence.Value.ToString("F0") + " (" + ((gang_influence.Value / total_influence) * 100).ToString("F0") + "%) <br>";
                 }
             }
 
@@ -130,15 +130,14 @@ public class DistributionPointUI : MonoBehaviour
             {
                 var newText = Instantiate(prefabText, policeSummary.transform);
                 newText.transform.localPosition = new Vector3(60, 0 + offest_y);
-                string gang_color = police_value.Key.color.ToHexString();
+                string gang_color = Gang.GetColor(police_value.Key.color).ToHexString();
                 newText.GetComponent<TextMeshProUGUI>().text = "<color=#" + gang_color + ">" + police_value.Key.name + "</color >";
 
                 float offset_x = 0;
                 int police_value_temp = police_value.Value;
                 while (police_value_temp > 0)
                 {
-                    var newIcon = Instantiate(prefabPoliceIcon);
-                    newIcon.transform.parent = policeSummary.transform;
+                    var newIcon = Instantiate(prefabPoliceIcon, policeSummary.transform);
                     newIcon.transform.localPosition = new Vector3(130 + offset_x, 15 + offest_y);
 
                     offset_x += 40f;

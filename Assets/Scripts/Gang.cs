@@ -8,6 +8,8 @@ enum Owner
     AI
 }
 
+public enum ColorTag { green, yellow, red, blue }
+
 public class Gang
 {
     private Owner owner;
@@ -17,9 +19,25 @@ public class Gang
     public HashSet<ProductionPoint> productionPoints;
     //public HashSet<DistributionPoint> distributionPoints;
 
-    public Color color;
+    public ColorTag color;
 
-    public Gang(string name, float initialCapital, Color color, bool player = false)
+    public static Color GetColor(ColorTag color)
+    {
+        switch (color)
+        {
+            default:
+            case ColorTag.green:
+                return Color.green;
+            case ColorTag.red:
+                return Color.red;
+            case ColorTag.yellow:
+                return Color.yellow;
+            case ColorTag.blue:
+                return Color.blue;
+        }
+    }
+
+    public Gang(string name, float initialCapital, ColorTag color, bool player = false)
     {
         this.name = name;
         money = initialCapital;
