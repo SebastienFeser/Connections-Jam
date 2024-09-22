@@ -9,14 +9,13 @@ public class DraggableConnection : MonoBehaviour
     Vector2 mousePosition;
     ProductionPoint productionPointOrigin;
 
-    public bool placed;
+    public bool placed = false;
 
     private int layerMask;
 
     private void Start()
     {
         layerMask = 1 << LayerMask.NameToLayer("Default");
-        placed = false;
 
     }
     public void SetStartPosition(Vector2 position, ProductionPoint productionPoint)
@@ -39,13 +38,13 @@ public class DraggableConnection : MonoBehaviour
 
     public bool AddConnection(DistributionPoint distributionPoint, float cost)
     {
-        bool failure = productionPointOrigin.IsConnectedTo(distributionPoint) || distributionPoint.IsConnectedTo(productionPointOrigin) || Level.playerGang.money - cost < 0;
+        bool failure = productionPointOrigin.IsConnectedTo(distributionPoint) || distributionPoint.IsConnectedTo(productionPointOrigin) || productionPointOrigin.owner.money - cost < 0;
         if (!failure)
         {
             lineRenderer.SetPosition(1, distributionPoint.transform.position);
             productionPointOrigin.AddConnection(distributionPoint);
             distributionPoint.AddConnection(productionPointOrigin);
-            Level.playerGang.Pay(-cost);
+            productionPointOrigin.owner.Pay(-cost);
         }
 
         placed = true;

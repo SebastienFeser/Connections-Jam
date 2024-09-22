@@ -80,7 +80,6 @@ public class AI : MonoBehaviour
         if (gang.money >= Level.connectionBaseCost && timer <= 0)
         {
             float projectedReward = PlanConnection(out ProductionPoint productionPoint, out DistributionPoint distributionPoint);
-            Debug.Log(projectedReward);
             if (projectedReward > Mathf.NegativeInfinity)
             {
                 DraggableConnection draggableConnection = productionPoint.GetComponent<DragConnection>().createConnection();
@@ -104,7 +103,7 @@ public class AI : MonoBehaviour
 
     private void Update()
     {
-        if (false && activated)
+        if (activated)
         {
             if (timer > 0) timer -= Time.deltaTime;
             play();
