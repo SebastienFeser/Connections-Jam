@@ -6,49 +6,50 @@ public class Product : MonoBehaviour
 {
     float velocity = 0;
     bool move = false;
-    Transform startTransform;
-    Transform destinationTransform;
+    Vector3 origin;
     Vector3 direction;
-    DistributionPoint distributionPoint;
+    ProductionPoint originPoint;
+    DistributionPoint targetPoint;
+    float currentDistance, totalDistance;
 
     public void SetVelocity(float newVelocity)
     {
         velocity = newVelocity;
     }
 
-    public void StartMovement(Transform start, Transform destination, float newVelocity, DistributionPoint newDistributionPoint)
+    public void StartMovement(ProductionPoint productionPoint, DistributionPoint distributionPoint, float velocity)
     {
-        velocity = newVelocity;
-        startTransform = start;
-        destinationTransform = destination;
+        originPoint = productionPoint;
+        targetPoint = distributionPoint;
+        this.velocity = velocity;
+        origin = productionPoint.transform.position;
+        direction = distributionPoint.transform.position - origin;
+        totalDistance = direction.magnitude;
+        direction = direction.normalized;
 
-        transform.position = startTransform.position;
-        direction = destinationTransform.position - startTransform.position;
-        distributionPoint = newDistributionPoint;
+        transform.position = origin;
+        currentDistance = 0;
+        
         move = true;
     }
 
-    private void Awake()
+    private void Arrive()
     {
-        move = false;
+        targetPoint.ReceiveProduct(originPoint.owner);
+        Destroy(gameObject);
     }
+
     private void Update()
     {
-        if(move)
+        if (move)
         {
-            transform.position += direction * Time.deltaTime * velocity;
-            if(Vector3.Distance(transform.position, destinationTransform.position) < 0.5f)
-            {
-                if(distributionPoint.ProductionDemand > 0)
-                {
-                    //Destroy(gameObject);
-                }
-                else
-                {
-                    //Destroy(gameObject);
-                }
-            }
+            currentDistance += Time.deltaTime * velocity;
+            transform.position = origin + direction * currentDistance;
 
+            if (currentDistance >= totalDistance)
+            {
+                Arrive();
+            }
         }
     }
 }

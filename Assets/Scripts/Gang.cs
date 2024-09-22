@@ -15,23 +15,26 @@ public class Gang
     public float money;
 
     public HashSet<ProductionPoint> productionPoints;
-    public HashSet<DistributionPoint> distributionPoints;
+    //public HashSet<DistributionPoint> distributionPoints;
 
-    public Gang(string name, float initialCapital, bool player = false)
+    public Color color;
+
+    public Gang(string name, float initialCapital, Color color, bool player = false)
     {
         this.name = name;
         money = initialCapital;
+        this.color = color;
         owner = player ? Owner.player : Owner.AI;
 
         productionPoints = new HashSet<ProductionPoint>();
-        distributionPoints = new HashSet<DistributionPoint>();
+        //distributionPoints = new HashSet<DistributionPoint>();
     }
 
     public bool IsPlayer() { return owner == Owner.player; }
     public void AddProductionPoint(ProductionPoint point) { productionPoints.Add(point); }
     public void RemoveProductionPoint(ProductionPoint point) { productionPoints.Remove(point); }
-    public void AddDistributionPoint(DistributionPoint point) { distributionPoints.Add(point); }
-    public void RemoveDistributionPoint(DistributionPoint point) { distributionPoints.Remove(point); }
+    //public void AddDistributionPoint(DistributionPoint point) { distributionPoints.Add(point); }
+    //public void RemoveDistributionPoint(DistributionPoint point) { distributionPoints.Remove(point); }
 
     public bool Pay(float amount)
     {

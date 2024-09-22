@@ -17,35 +17,35 @@ public class ProductionPoint : MonoBehaviour
     Gang gang;
 
     public Gang owner;
+    private bool produce = false;
 
     public float productFrequency { get { return 1 / (productTimer + Mathf.Epsilon); } }
 
-    public void SetOwner(Gang gang) { owner = gang; }
+    public void SetOwner(Gang gang)
+    {
+        owner = gang;
+        owner.AddProductionPoint(this);
+        GetComponent<SpriteRenderer>().color = owner.color;
+        produce = true;
+    }
 
     private void Update()
     {
-        actualTime += Time.deltaTime;
-        if(actualTime > productTimer)
+        if (produce)
         {
-            if (productCount < maximumGoods)
+            actualTime += Time.deltaTime;
+            if (actualTime > productTimer)
             {
-                SpawnProduct();
-                productCount++;
+                if (productCount < maximumGoods) SpawnProduct();
+                actualTime -= productTimer;
             }
-            actualTime -= productTimer;
-        }
 
-        foreach(DistributionPoint element in connections)
-        {
-            if(element.ProductionDemand > 0)
+            while (waitingDemand.Count > 0 && productCount > 0) // change for a if + timer if we want delay between sending operation
             {
-                SendProducts(element);
+                DistributionPoint dp = waitingDemand[0];
+                if (dp.productDemand > 0) SendProduct(dp); // only send if the node is still asking
+                waitingDemand.RemoveAt(0);
             }
-        }
-
-        void SendProducts(DistributionPoint distributionPoint)
-        {
-
         }
     }
 
@@ -66,6 +66,7 @@ public class ProductionPoint : MonoBehaviour
                 GameObject newProduct = Instantiate(productGameObject, transform);
                 newProduct.transform.position = productSpawnPoints[i].position;
                 productsAroundPP[i] = newProduct;
+                productCount++;
                 break;
             }
         }
@@ -73,7 +74,10 @@ public class ProductionPoint : MonoBehaviour
 
     public bool AskProducts(DistributionPoint distributionPoint)
     {
-        if(productCount > 0)
+        waitingDemand.Add(distributionPoint);
+        return true;
+
+        /*if(productCount > 0)
         {
             if (waitingDemand.Count == 0)
             {
@@ -105,15 +109,16 @@ public class ProductionPoint : MonoBehaviour
                 waitingDemand.Add(distributionPoint);
             }
             return false;
-        }
+        }*/
     }
+
     void SendProduct(DistributionPoint distributionPoint)
     {
         for (int i = productsAroundPP.Length - 1; i >= 0; i--)
         {
             if(productsAroundPP[i] != null)
             {
-                productsAroundPP[i].GetComponent<Product>().StartMovement(transform, distributionPoint.transform, 1, distributionPoint);
+                productsAroundPP[i].GetComponent<Product>().StartMovement(this, distributionPoint, 5f);
                 productsAroundPP[i] = null;
                 productCount--;
                 break;
