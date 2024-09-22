@@ -32,6 +32,8 @@ public class DistributionPoint : MonoBehaviour
     private float upgradeProbability = 0f;
     private float spreadProbability = 0f;
 
+    AudioSource sellAudioSource;
+
     public int ProductionDemand
     {
         get { return productDemand; }
@@ -131,6 +133,10 @@ public class DistributionPoint : MonoBehaviour
         UISystem.distributionPointUI.DisplayUI(this);
     }
 
+    private void Start()
+    {
+        sellAudioSource = GetComponent<AudioSource>();
+    }
     private void Update()
     {
         actualTime += Time.deltaTime;
@@ -208,6 +214,10 @@ public class DistributionPoint : MonoBehaviour
         {
             Destroy(demandAroundDP[productDemand - 1]);
             demandAroundDP.RemoveAt(productDemand - 1);
+            if(gang.IsPlayer())
+            {
+                sellAudioSource.Play();
+            }
             askedProducts--;
             Payout(gang);
         }

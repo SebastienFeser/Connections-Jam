@@ -14,7 +14,7 @@ public class ProductionPoint : MonoBehaviour
     [SerializeField] GameObject productGameObject;
     GameObject[] productsAroundPP = new GameObject[8];
     List<DistributionPoint> waitingDemand = new List<DistributionPoint>();
-    Gang gang;
+    AudioSource spawnAudioSource;
 
     public Gang owner;
     private bool produce = false;
@@ -27,6 +27,11 @@ public class ProductionPoint : MonoBehaviour
         owner.AddProductionPoint(this);
         GetComponent<SpriteRenderer>().color = owner.color;
         produce = true;
+    }
+
+    private void Start()
+    {
+        spawnAudioSource = GetComponent<AudioSource>();
     }
 
     private void Update()
@@ -52,11 +57,6 @@ public class ProductionPoint : MonoBehaviour
     public bool IsConnectedTo(DistributionPoint distributionPoint) { return connections.Contains(distributionPoint); }
     public void AddConnection(DistributionPoint distributionPoint) { connections.Add(distributionPoint); }
 
-    public void SetGang(Gang newGang)
-    {
-        gang = newGang;
-    }
-
     public void SpawnProduct()
     {
         for(int i = 0; i < productsAroundPP.Length; i++)
@@ -65,6 +65,10 @@ public class ProductionPoint : MonoBehaviour
             {
                 GameObject newProduct = Instantiate(productGameObject, transform);
                 newProduct.transform.position = productSpawnPoints[i].position;
+                if (owner.IsPlayer())
+                {
+                    spawnAudioSource.Play();
+                }
                 productsAroundPP[i] = newProduct;
                 productCount++;
                 break;
