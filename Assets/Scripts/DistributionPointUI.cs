@@ -9,7 +9,7 @@ public class DistributionPointUI : MonoBehaviour
     public Button buyInfluence;
     public TextMeshPro influenceMoneyInput;
     public TextMeshPro buyInfluenceOutput;
-    public GameObject viewportContent;
+    public TextMeshPro influenceSummary;
     public DistributionPoint distributionPoint;
 
     //influence output timing
@@ -28,23 +28,29 @@ public class DistributionPointUI : MonoBehaviour
         float result = 0f;
         bool valid_transaction = false;
         bool valid_float = float.TryParse(influenceMoneyInput.text, out result);
-        if (valid_float)
+        bool valid_gang = distributionPoint.influence.ContainsKey(Level.playerGang);
+        if (valid_gang && valid_float)
         {
             valid_transaction = Level.playerGang.Pay(-result);
         }
 
-        if (valid_float && valid_transaction)
+        if (valid_gang && valid_float && valid_transaction)
         {
             buyInfluenceOutput.color = Color.green;
             buyInfluenceOutput.text = "Your transaction has been accepted.";
 
             distributionPoint.IncrementInfluence(Level.playerGang, result);
+            updateInfluence();
             
         }
         else
         {
             buyInfluenceOutput.color = Color.red;
-            if (!valid_float)
+            if (!valid_gang)
+            {
+                buyInfluenceOutput.text = "You don't have any connexions.";
+            }
+            else if (!valid_float)
             {
                 buyInfluenceOutput.text = "Your input is not a valid amount.";
             }
@@ -61,9 +67,32 @@ public class DistributionPointUI : MonoBehaviour
         // 4) Update influence summary
     }
 
+    private void updateInfluence()
+    {
+        influenceSummary.text = "";
+        if(distributionPoint.influence.Count != 0)
+        {
+            float total_influence = 0f;
+            foreach (KeyValuePair<Gang, float> gang_influence in distributionPoint.influence)
+            {
+                total_influence += gang_influence.Value;
+            }
+
+            foreach (KeyValuePair<Gang, float> gang_influence in distributionPoint.influence)
+            {
+                influenceSummary.text += gang_influence.Key.name + ": " + gang_influence.Value.ToString() + " (" + ((gang_influence.Value / total_influence) * 100).ToString() + "%) /n";
+            }
+        }
+    }
+
     public void DisplayUI(DistributionPoint newDistributionPoint)
     {
         distributionPoint = newDistributionPoint;
+
+        updateInfluence();
+        //Modify title
+
+
         this.gameObject.SetActive(true);
     }
 
