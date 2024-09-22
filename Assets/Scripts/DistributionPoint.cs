@@ -18,8 +18,7 @@ public class DistributionPoint : MonoBehaviour
     [SerializeField] Transform[] productDemandSpawnPoints;
     List<GameObject> demandAroundDP = new List<GameObject>();
     [SerializeField] GameObject demandGameObject;
-    
-
+    Level level;
     public int ProductionDemand
     {
         get { return productDemand; }
@@ -47,6 +46,11 @@ public class DistributionPoint : MonoBehaviour
     public void OpenDistribUI()
     {
         UISystem.distributionPointUI.DisplayUI(this);
+    }
+
+    private void Start()
+    {
+        level = FindObjectOfType<Level>();
     }
 
     private void Update()
