@@ -1990,7 +1990,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mainMenu: {fileID: 1564997543}
-  howToPlay: {fileID: 402820591}
+  howToPlay: {fileID: 287208278}
 --- !u!4 &1808374908
 Transform:
   m_ObjectHideFlags: 0
