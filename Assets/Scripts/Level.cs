@@ -6,6 +6,8 @@ public class Level : MonoBehaviour
 {
     public static Level level;
 
+    public static bool dragging;
+
     public static Gang playerGang { get { return level._playerGang; } }
     public static List<Gang> adversaryGangs { get { return level._adversaryGangs; } }
     public static List<ProductionPoint> productionPoints { get { return level._productionPoints; } }
@@ -26,7 +28,7 @@ public class Level : MonoBehaviour
     private void InitializeGangs()
     {
         // arbitrary values for now
-        _playerGang = new Gang("Milo's Club", 1000, Color.green, true);
+        _playerGang = new Gang("Milo's Club", 200, Color.green, true);
 
         _adversaryGangs = new List<Gang>();
         createAIGang(new Gang("MegaCorp Inc. (TM)", 500, Color.yellow));
@@ -153,6 +155,7 @@ public class Level : MonoBehaviour
     void Start()
     {
         level = this;
+        dragging = false;
 
         InitializeGangs();
         InitializePoints();

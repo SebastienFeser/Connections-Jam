@@ -81,49 +81,51 @@ public class DistributionPointUI : MonoBehaviour
 
     public void updateInfluence()
     {
-        influenceSummary.text = "";
-        if(distributionPoint.influence.Count != 0)
+        if (!(distributionPoint is null))
         {
-            float total_influence = 0f;
-            foreach (KeyValuePair<Gang, float> gang_influence in distributionPoint.influence)
+            influenceSummary.text = "";
+            if (distributionPoint.influence.Count != 0)
             {
-                total_influence += gang_influence.Value;
+                float total_influence = 0f;
+                foreach (KeyValuePair<Gang, float> gang_influence in distributionPoint.influence)
+                {
+                    total_influence += gang_influence.Value;
+                }
+
+                foreach (KeyValuePair<Gang, float> gang_influence in distributionPoint.influence)
+                {
+                    string gang_color = gang_influence.Key.color.ToHexString();
+                    influenceSummary.text += "<color=#" + gang_color + ">" + gang_influence.Key.name + "</color >" + ": " + gang_influence.Value.ToString() + " (" + ((gang_influence.Value / total_influence) * 100).ToString() + "%) <br>";
+                }
             }
 
-            foreach (KeyValuePair<Gang, float> gang_influence in distributionPoint.influence)
+            foreach (Transform child in policeSummary.transform)
             {
-                string gang_color = gang_influence.Key.color.ToHexString();
-                influenceSummary.text += "<color=#" + gang_color + ">" + gang_influence.Key.name + "</color >" + ": " + gang_influence.Value.ToString() + " (" + ((gang_influence.Value / total_influence) * 100).ToString() + "%) <br>";
-            }
-        }
-
-        foreach(Transform child in policeSummary.transform)
-        {
-            Destroy(child.gameObject);
-        }
-
-        float offest_y = 0;
-        foreach (KeyValuePair<Gang, int> police_value in distributionPoint.policeValue)
-        {
-            var newText = Instantiate(prefabText);
-            newText.transform.parent = policeSummary.transform;
-            newText.transform.localPosition = new Vector3(60, 0 + offest_y);
-            string gang_color = police_value.Key.color.ToHexString();
-            newText.GetComponent<TextMeshProUGUI>().text = "<color=#" + gang_color + ">" + police_value.Key.name + "</color >";
-
-            float offset_x = 0;
-            int police_value_temp = police_value.Value;
-            while(police_value_temp > 0)
-            {
-                var newIcon = Instantiate(prefabPoliceIcon);
-                newIcon.transform.parent = policeSummary.transform;
-                newIcon.transform.localPosition = new Vector3(130 + offset_x, 15 + offest_y);
-
-                offset_x += 40f;
-                police_value_temp -= 100;
+                Destroy(child.gameObject);
             }
 
-            offest_y += -35f;
+            float offest_y = 0;
+            foreach (KeyValuePair<Gang, int> police_value in distributionPoint.policeValue)
+            {
+                var newText = Instantiate(prefabText, policeSummary.transform);
+                newText.transform.localPosition = new Vector3(60, 0 + offest_y);
+                string gang_color = police_value.Key.color.ToHexString();
+                newText.GetComponent<TextMeshProUGUI>().text = "<color=#" + gang_color + ">" + police_value.Key.name + "</color >";
+
+                float offset_x = 0;
+                int police_value_temp = police_value.Value;
+                while (police_value_temp > 0)
+                {
+                    var newIcon = Instantiate(prefabPoliceIcon);
+                    newIcon.transform.parent = policeSummary.transform;
+                    newIcon.transform.localPosition = new Vector3(130 + offset_x, 15 + offest_y);
+
+                    offset_x += 40f;
+                    police_value_temp -= 100;
+                }
+
+                offest_y += -35f;
+            }
         }
     }
 

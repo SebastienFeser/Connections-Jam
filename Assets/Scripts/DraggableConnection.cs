@@ -100,6 +100,7 @@ public class DraggableConnection : MonoBehaviour
                     }
                 }
 
+                if (productionPointOrigin.owner.IsPlayer()) Level.dragging = false;
                 UISystem.moneyDisplayUI.StopDisplayCost();
 
                 if (destroy) Destroy(gameObject);

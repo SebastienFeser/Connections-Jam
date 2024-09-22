@@ -193,7 +193,7 @@ public class DistributionPoint : MonoBehaviour
         Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         Ray ray = new Ray(new Vector3(mousePosition.x, mousePosition.y, -0.1f), Vector3.forward);
         RaycastHit2D hit = Physics2D.GetRayIntersection(ray, 1f, 1 << LayerMask.NameToLayer("Default"));
-        if (Input.GetMouseButtonDown(0) && !(hit.collider is null))
+        if (!Level.dragging && Input.GetMouseButtonDown(0) && !(hit.collider is null))
         {
             DistributionPoint distrib;
             bool test = hit.collider.gameObject.TryGetComponent(out distrib);

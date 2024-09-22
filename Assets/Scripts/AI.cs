@@ -133,7 +133,6 @@ public class AI : MonoBehaviour
             {
                 if (gang.Pay(-investment))
                 {
-                    Debug.Log(gang.name + " invested!");
                     distributionPoint.IncrementInfluence(gang, investment);
                     investmentTimer = investmentTimerDuration;
                 }
