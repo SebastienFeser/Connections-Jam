@@ -33,8 +33,12 @@ public class Level : MonoBehaviour
 
     private void InitializePoints()
     {
+        _productionPoints = new List<ProductionPoint>();
+        _distributionPoints = new List<DistributionPoint>();
+
         foreach (ProductionPoint pp in GetComponentsInChildren<ProductionPoint>())
         {
+            pp.SetOwner(playerGang); // for now
             _productionPoints.Add(pp);
         }
 

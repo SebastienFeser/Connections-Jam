@@ -16,6 +16,12 @@ public class ProductionPoint : MonoBehaviour
     List<DistributionPoint> waitingDemand = new List<DistributionPoint>();
     Gang gang;
 
+    public Gang owner;
+
+    public float productFrequency { get { return 1 / (productTimer + Mathf.Epsilon); } }
+
+    public void SetOwner(Gang gang) { owner = gang; }
+
     private void Update()
     {
         actualTime += Time.deltaTime;
