@@ -36,12 +36,15 @@ public class ProductionPoint : MonoBehaviour
             actualTime += Time.deltaTime;
             if (actualTime > productTimer)
             {
-                if (productCount < maximumGoods)
-                {
-                    SpawnProduct();
-                    productCount++;
-                }
+                if (productCount < maximumGoods) SpawnProduct();
                 actualTime -= productTimer;
+            }
+
+            while (waitingDemand.Count > 0 && productCount > 0) // change for a if + timer if we want delay between sending operation
+            {
+                DistributionPoint dp = waitingDemand[0];
+                if (dp.productDemand > 0) SendProduct(dp); // only send if the node is still asking
+                waitingDemand.RemoveAt(0);
             }
         }
     }
@@ -63,6 +66,7 @@ public class ProductionPoint : MonoBehaviour
                 GameObject newProduct = Instantiate(productGameObject, transform);
                 newProduct.transform.position = productSpawnPoints[i].position;
                 productsAroundPP[i] = newProduct;
+                productCount++;
                 break;
             }
         }
@@ -70,7 +74,10 @@ public class ProductionPoint : MonoBehaviour
 
     public bool AskProducts(DistributionPoint distributionPoint)
     {
-        if(productCount > 0)
+        waitingDemand.Add(distributionPoint);
+        return true;
+
+        /*if(productCount > 0)
         {
             if (waitingDemand.Count == 0)
             {
@@ -102,15 +109,16 @@ public class ProductionPoint : MonoBehaviour
                 waitingDemand.Add(distributionPoint);
             }
             return false;
-        }
+        }*/
     }
+
     void SendProduct(DistributionPoint distributionPoint)
     {
         for (int i = productsAroundPP.Length - 1; i >= 0; i--)
         {
             if(productsAroundPP[i] != null)
             {
-                productsAroundPP[i].GetComponent<Product>().StartMovement(transform, distributionPoint.transform, 1, distributionPoint);
+                productsAroundPP[i].GetComponent<Product>().StartMovement(this, distributionPoint, 5f);
                 productsAroundPP[i] = null;
                 productCount--;
                 break;
