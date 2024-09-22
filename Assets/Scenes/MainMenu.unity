@@ -305,7 +305,7 @@ GameObject:
   - component: {fileID: 402820594}
   - component: {fileID: 402820593}
   m_Layer: 5
-  m_Name: Button (1)
+  m_Name: Quit
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -866,7 +866,7 @@ GameObject:
   - component: {fileID: 1281769018}
   - component: {fileID: 1281769017}
   m_Layer: 5
-  m_Name: Canvas
+  m_Name: UI
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1007,7 +1007,7 @@ GameObject:
   - component: {fileID: 1586506193}
   - component: {fileID: 1586506192}
   m_Layer: 5
-  m_Name: Button (2)
+  m_Name: HowToPlay
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1420,11 +1420,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 1808374906}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d28a4246cd9103a43a35438f780c005f, type: 3}
+  m_Script: {fileID: 11500000, guid: bd957b27dd7ae4b4987ef719e81cb722, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   mainMenu: {fileID: 1564997543}
-  howToPlay: {fileID: 287208278}
+  howToPlay: {fileID: 402820591}
 --- !u!4 &1808374908
 Transform:
   m_ObjectHideFlags: 0
@@ -1453,7 +1453,7 @@ GameObject:
   - component: {fileID: 2007659548}
   - component: {fileID: 2007659547}
   m_Layer: 5
-  m_Name: Button
+  m_Name: Start
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
