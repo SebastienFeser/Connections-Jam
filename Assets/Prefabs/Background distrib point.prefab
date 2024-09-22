@@ -911,6 +911,41 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!1 &6204030728147088881
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8318662907996004370}
+  m_Layer: 5
+  m_Name: Size summary
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &8318662907996004370
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6204030728147088881}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3865638114959823035}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &7407077686464437401
 GameObject:
   m_ObjectHideFlags: 0
@@ -1291,7 +1326,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &3865638114959823035
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1307,6 +1342,7 @@ RectTransform:
   - {fileID: 6734106292192734299}
   - {fileID: 3028507547576743173}
   - {fileID: 9212938369089921706}
+  - {fileID: 8318662907996004370}
   - {fileID: 9031119716112847145}
   - {fileID: 3707560987645916421}
   - {fileID: 7531625200657378569}
@@ -1375,8 +1411,10 @@ MonoBehaviour:
   influenceSummary: {fileID: 8984931591248525114}
   distributionPoint: {fileID: 0}
   policeSummary: {fileID: 4532405687387261405}
+  sizeSummary: {fileID: 6204030728147088881}
   prefabText: {fileID: 5936709392413055225, guid: 808f911a0fe1ddc4f81dda80b47791db, type: 3}
   prefabPoliceIcon: {fileID: 8309190296133850069, guid: b78fd5d7efe30394ea85e3d58748df87, type: 3}
+  prefabSize: {fileID: 6078568855587887951, guid: 849696cd54d11464bb24d71f538a6b37, type: 3}
 --- !u!1 &9026602399396839486
 GameObject:
   m_ObjectHideFlags: 0
@@ -1394,7 +1432,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &6734106292192734299
 RectTransform:
   m_ObjectHideFlags: 0

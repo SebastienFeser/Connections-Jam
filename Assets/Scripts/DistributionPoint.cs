@@ -83,6 +83,7 @@ public class DistributionPoint : MonoBehaviour
                 localProductPrice = 30;
                 break;
         }
+        if (UISystem.distributionPointUI != null) UISystem.distributionPointUI.updateDistributionSize();
     }
 
     public void Upgrade()

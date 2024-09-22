@@ -16,8 +16,10 @@ public class DistributionPointUI : MonoBehaviour
     public DistributionPoint distributionPoint;
 
     public GameObject policeSummary;
+    public GameObject sizeSummary;
     public GameObject prefabText;
     public GameObject prefabPoliceIcon;
+    public GameObject prefabSize;
 
     //influence output timing
     private float influenceOutputAppearanceTime;
@@ -79,6 +81,25 @@ public class DistributionPointUI : MonoBehaviour
         this.gameObject.SetActive(false);
     }
 
+    public void updateDistributionSize()
+    {
+        foreach (Transform child in sizeSummary.transform)
+        {
+            Destroy(child.gameObject);
+        }
+
+        int distribSizeTemp = (int)distributionPoint.size;
+        float offset_x = 0f;
+        while(distribSizeTemp >= 0)
+        {
+            var newSize = Instantiate(prefabSize, sizeSummary.transform);
+            newSize.transform.localPosition = new Vector3(-30 + offset_x, 165, 0);
+
+            offset_x += 20;
+            distribSizeTemp -= 1;
+        }
+    }
+
     public void updateInfluence()
     {
         if (!(distributionPoint is null))
@@ -134,6 +155,7 @@ public class DistributionPointUI : MonoBehaviour
         distributionPoint = newDistributionPoint;
 
         updateInfluence();
+        updateDistributionSize();
 
         this.gameObject.SetActive(true);
     }

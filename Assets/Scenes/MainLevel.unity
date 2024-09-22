@@ -587,10 +587,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Background distrib point
       objectReference: {fileID: 0}
-    - target: {fileID: 8990451600675017558, guid: 9e279d663b8a93f41b5cb5baabe72b80, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
