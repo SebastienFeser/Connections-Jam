@@ -116,8 +116,7 @@ public class DistributionPointUI : MonoBehaviour
                 int police_value_temp = police_value.Value;
                 while (police_value_temp > 0)
                 {
-                    var newIcon = Instantiate(prefabPoliceIcon);
-                    newIcon.transform.parent = policeSummary.transform;
+                    var newIcon = Instantiate(prefabPoliceIcon, policeSummary.transform);
                     newIcon.transform.localPosition = new Vector3(130 + offset_x, 15 + offest_y);
 
                     offset_x += 40f;
