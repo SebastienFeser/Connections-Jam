@@ -12,14 +12,9 @@ public class CameraMovement : MonoBehaviour
     [SerializeField] float minimumZoom;
     [SerializeField] float maximumZoom;
 
-    PlayerInput playerInput;
-
-    InputAction zoomAction;
-
     private void Start()
     {
-        playerInput = GetComponent<PlayerInput>();
-        zoomAction = playerInput.actions.FindAction("Zoom");
+
     }
     private void Update()
     {
