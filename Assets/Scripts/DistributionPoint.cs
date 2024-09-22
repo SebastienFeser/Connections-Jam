@@ -60,9 +60,9 @@ public class DistributionPoint : MonoBehaviour
     public void RequestGoods()
     {
         bool hasAskedDemand = false;
-        foreach(Tuple<ProductionPoint, float> element in connections)
+        foreach(ProductionPoint element in connections)
         {
-            hasAskedDemand = element.Item1.AskProducts(this);
+            hasAskedDemand = element.AskProducts(this);
         }
         if(hasAskedDemand)
         {
