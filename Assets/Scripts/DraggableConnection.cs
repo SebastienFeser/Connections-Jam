@@ -25,7 +25,7 @@ public class DraggableConnection : MonoBehaviour
         startPosition = position;
         productionPointOrigin = productionPoint;
         lineRenderer.SetPosition(0, new Vector3(startPosition.x, startPosition.y, 0f));
-        lineRenderer.startColor = productionPoint.owner.color;
+        lineRenderer.startColor = Gang.GetColor(productionPoint.owner.color);
     }
 
     private bool CheckUnderMouse(out RaycastHit2D hit)

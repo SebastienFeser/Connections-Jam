@@ -15,6 +15,7 @@ public class ProductionPoint : MonoBehaviour
     GameObject[] productsAroundPP = new GameObject[8];
     List<DistributionPoint> waitingDemand = new List<DistributionPoint>();
     AudioSource spawnAudioSource;
+    [SerializeField] SpriteRenderer sprite;
 
     public Gang owner;
     private bool produce = false;
@@ -25,8 +26,26 @@ public class ProductionPoint : MonoBehaviour
     {
         owner = gang;
         owner.AddProductionPoint(this);
-        GetComponent<SpriteRenderer>().color = owner.color;
+        //GetComponent<SpriteRenderer>().color = owner.color;
+        sprite.sprite = Resources.Load<Sprite>("Sprites/FinalVisuals/House" + SpriteIndex(owner.color));
+
         produce = true;
+    }
+
+    private string SpriteIndex(ColorTag color)
+    {
+        switch (color)
+        {
+            default:
+            case ColorTag.green:
+                return "2";
+            case ColorTag.red:
+                return "";
+            case ColorTag.yellow:
+                return "3";
+            case ColorTag.blue:
+                return "4";
+        }
     }
 
     private void Start()
