@@ -591,6 +591,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _moneyDisplayUI: {fileID: 1721918221}
+  _distributionPointUI: {fileID: 0}
 --- !u!114 &555281687
 MonoBehaviour:
   m_ObjectHideFlags: 0
