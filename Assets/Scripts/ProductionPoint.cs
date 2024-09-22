@@ -17,6 +17,7 @@ public class ProductionPoint : MonoBehaviour
     Gang gang;
 
     public Gang owner;
+    private bool produce = false;
 
     public float productFrequency { get { return 1 / (productTimer + Mathf.Epsilon); } }
 
@@ -25,32 +26,36 @@ public class ProductionPoint : MonoBehaviour
         owner = gang;
         owner.AddProductionPoint(this);
         GetComponent<SpriteRenderer>().color = owner.color;
+        produce = true;
     }
 
     private void Update()
     {
-        actualTime += Time.deltaTime;
-        if(actualTime > productTimer)
+        if (produce)
         {
-            if (productCount < maximumGoods)
+            actualTime += Time.deltaTime;
+            if (actualTime > productTimer)
             {
-                SpawnProduct();
-                productCount++;
+                if (productCount < maximumGoods)
+                {
+                    SpawnProduct();
+                    productCount++;
+                }
+                actualTime -= productTimer;
             }
-            actualTime -= productTimer;
-        }
 
-        foreach(DistributionPoint element in connections)
-        {
-            if(element.ProductionDemand > 0)
+            /*foreach (DistributionPoint element in connections)
             {
-                SendProducts(element);
+                if (element.ProductionDemand > 0)
+                {
+                    SendProducts(element);
+                }
             }
-        }
 
-        void SendProducts(DistributionPoint distributionPoint)
-        {
+            void SendProducts(DistributionPoint distributionPoint)
+            {
 
+            }*/
         }
     }
 
