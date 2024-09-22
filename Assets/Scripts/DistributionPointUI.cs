@@ -1,15 +1,18 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Drawing;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class DistributionPointUI : MonoBehaviour
 {
     public Button buyInfluence;
-    public TextMeshPro influenceMoneyInput;
-    public TextMeshPro buyInfluenceOutput;
-    public TextMeshPro influenceSummary;
+    public Button hideDistribPointUI;
+    public TMP_InputField influenceMoneyInput;
+    public TextMeshProUGUI buyInfluenceOutput;
+    public TextMeshProUGUI influenceSummary;
     public DistributionPoint distributionPoint;
 
     //influence output timing
@@ -36,7 +39,7 @@ public class DistributionPointUI : MonoBehaviour
 
         if (valid_gang && valid_float && valid_transaction)
         {
-            buyInfluenceOutput.color = Color.green;
+            buyInfluenceOutput.color = UnityEngine.Color.green;
             buyInfluenceOutput.text = "Your transaction has been accepted.";
 
             distributionPoint.IncrementInfluence(Level.playerGang, result);
@@ -45,7 +48,7 @@ public class DistributionPointUI : MonoBehaviour
         }
         else
         {
-            buyInfluenceOutput.color = Color.red;
+            buyInfluenceOutput.color = UnityEngine.Color.red;
             if (!valid_gang)
             {
                 buyInfluenceOutput.text = "You don't have any connexions.";
@@ -80,9 +83,17 @@ public class DistributionPointUI : MonoBehaviour
 
             foreach (KeyValuePair<Gang, float> gang_influence in distributionPoint.influence)
             {
-                influenceSummary.text += gang_influence.Key.name + ": " + gang_influence.Value.ToString() + " (" + ((gang_influence.Value / total_influence) * 100).ToString() + "%) /n";
+                string gang_color = gang_influence.Key.color.ToHexString();
+                influenceSummary.text += "<color=#" + gang_color + ">" + gang_influence.Key.name + "</color >" + ": " + gang_influence.Value.ToString() + " (" + ((gang_influence.Value / total_influence) * 100).ToString() + "%) <br>";
             }
         }
+    }
+
+    private void hideUI()
+    {
+        influenceMoneyInput.text = "";
+        buyInfluenceOutput.gameObject.SetActive(false);
+        this.gameObject.SetActive(false);
     }
 
     public void DisplayUI(DistributionPoint newDistributionPoint)
@@ -103,6 +114,7 @@ public class DistributionPointUI : MonoBehaviour
         influenceOutputFadeoutTime = 0.5f;
         influenceOutputFadeoutTimer = 0f;
         buyInfluence.onClick.AddListener(BuyInfluence);
+        hideDistribPointUI.onClick.AddListener(hideUI);
     }
 
     public void Update()
