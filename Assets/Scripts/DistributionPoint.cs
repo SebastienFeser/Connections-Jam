@@ -112,7 +112,9 @@ public class DistributionPoint : MonoBehaviour
     public void AddConnection(ProductionPoint productionPoint)
     {
         connections.Add(productionPoint);
-        influence[productionPoint.owner] = 1;
+        influence[productionPoint.owner] = Level.connectionBaseCost;
+
+        for (int i = 0; i < askedProducts; i++) productionPoint.AskProducts(this); // request from new source too
     }
 
     public void IncrementInfluence(Gang gang, float additionnalInfluence)
@@ -186,7 +188,7 @@ public class DistributionPoint : MonoBehaviour
         demandAroundDP.Add(newDemand);
     }
 
-    private void Payout()
+    private void Payout(Gang gang)
     {
         float sum = influence.Values.Sum();
         foreach (KeyValuePair<Gang,float> i in influence)
@@ -194,23 +196,20 @@ public class DistributionPoint : MonoBehaviour
             i.Key.Pay(localProductPrice * i.Value / sum);
         }
 
+        IncrementInfluence(gang, localProductPrice * influence[gang] / sum); // increase influence
+
         if (UnityEngine.Random.Range(0f,1f) < upgradeProbability) Upgrade(); // random upgrade
         if (UnityEngine.Random.Range(0f, 1f) < spreadProbability) Level.Spread(this); // random spread
     }
 
-    private void OnTriggerEnter2D(Collider2D collision)
+    public void ReceiveProduct(Gang gang)
     {
-        if(collision.tag == "Product")
+        if (productDemand > 0)
         {
-            if(productDemand > 0)
-            {
-                Destroy(demandAroundDP[productDemand - 1]);
-                demandAroundDP.RemoveAt(productDemand - 1);
-                askedProducts--;
-                Payout();
-            }
-
-            Destroy(collision.gameObject);
+            Destroy(demandAroundDP[productDemand - 1]);
+            demandAroundDP.RemoveAt(productDemand - 1);
+            askedProducts--;
+            Payout(gang);
         }
     }
 }
