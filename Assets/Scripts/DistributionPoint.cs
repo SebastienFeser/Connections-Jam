@@ -3,6 +3,7 @@ using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Unity.Burst.CompilerServices;
 
 public enum DistributionSize
 {
@@ -123,6 +124,10 @@ public class DistributionPoint : MonoBehaviour
     {
         return influence[gang];
     }
+    public void OpenDistribUI()
+    {
+        UISystem.distributionPointUI.DisplayUI(this);
+    }
 
     private void Update()
     {
@@ -138,6 +143,26 @@ public class DistributionPoint : MonoBehaviour
         if(productDemand > askedProducts)
         {
             RequestGoods();
+        }
+
+        //Open Distrib UI check
+        Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        Ray ray = new Ray(new Vector3(mousePosition.x, mousePosition.y, -0.1f), Vector3.forward);
+        RaycastHit2D hit = Physics2D.GetRayIntersection(ray, 1f, 1 << LayerMask.NameToLayer("Default"));
+
+        
+
+        if (Input.GetMouseButtonDown(0) && !(hit.collider is null))
+        {
+            DistributionPoint distrib;
+            bool test = hit.collider.gameObject.TryGetComponent(out distrib);
+            if (test)
+            {
+                if (hit.collider.gameObject.GetComponent<DistributionPoint>().Equals(this))
+                {
+                    OpenDistribUI();
+                }
+            }
         }
     }
 
