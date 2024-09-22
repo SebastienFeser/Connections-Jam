@@ -34,21 +34,6 @@ public class Product : MonoBehaviour
     }
     private void Update()
     {
-        if(move)
-        {
-            transform.position += direction * Time.deltaTime * velocity;
-            if(Vector3.Distance(transform.position, destinationTransform.position) < 0.5f)
-            {
-                if(distributionPoint.ProductionDemand > 0)
-                {
-                    //Destroy(gameObject);
-                }
-                else
-                {
-                    //Destroy(gameObject);
-                }
-            }
-
-        }
+        if(move) transform.position += direction * Time.deltaTime * velocity;
     }
 }

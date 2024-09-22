@@ -52,26 +52,103 @@ public class Level : MonoBehaviour
         }
 
         // sample initial production point for each gang
-        List<int> indices = new List<int>();
-        for (int i = 0; i < _productionPoints.Count; i++) indices.Add(i);
-
-        int randomIndex = Random.Range(0, indices.Count - 1);
-        _productionPoints[indices[randomIndex]].SetOwner(_playerGang);
-        indices.Remove(indices[randomIndex]);
-
-        foreach (Gang g in _adversaryGangs)
-        {
-            randomIndex = Random.Range(0, indices.Count - 1);
-            _productionPoints[indices[randomIndex]].SetOwner(g);
-            indices.Remove(indices[randomIndex]);
-        }
+        SampleInitialProductionPoints();
 
         // setup distribution points
         foreach (DistributionPoint dp in GetComponentsInChildren<DistributionPoint>())
         {
+            dp.Initialize();
             _distributionPoints.Add(dp);
         }
+
+        // upgrade distribution points
+        UpgradeProximalDistributionPoints();
     }
+
+    private void SampleInitialProductionPoints()
+    {
+        List<int> indices = new List<int>();
+        for (int i = 0; i < productionPoints.Count; i++) indices.Add(i);
+
+        int randomIndex = Random.Range(0, indices.Count - 1);
+        productionPoints[indices[randomIndex]].SetOwner(playerGang);
+        indices.Remove(indices[randomIndex]);
+
+        foreach (Gang g in adversaryGangs)
+        {
+            randomIndex = Random.Range(0, indices.Count - 1);
+            productionPoints[indices[randomIndex]].SetOwner(g);
+            indices.Remove(indices[randomIndex]);
+        }
+    }
+
+    private void UpgradeProximalDistributionPoints()
+    {
+        float minDistance = Mathf.Infinity;
+        DistributionPoint argminPoint = null;
+        foreach (ProductionPoint pp in playerGang.productionPoints)
+        {
+            foreach (DistributionPoint dp in GetComponentsInChildren<DistributionPoint>())
+            {
+                if (DistributionPoint.StrictlySmaller(dp.size, DistributionSize.medium))
+                {
+                    float currentDistance = (dp.transform.position - pp.transform.position).sqrMagnitude;
+                    if (currentDistance < minDistance)
+                    {
+                        argminPoint = dp;
+                        minDistance = currentDistance;
+                    }
+                }
+            }
+        }
+
+        if (!(argminPoint is null)) argminPoint.Upgrade();
+
+        foreach (Gang gang in adversaryGangs)
+        {
+            minDistance = Mathf.Infinity;
+            argminPoint = null;
+            foreach (ProductionPoint pp in gang.productionPoints)
+            {
+                foreach (DistributionPoint dp in GetComponentsInChildren<DistributionPoint>())
+                {
+                    if (DistributionPoint.StrictlySmaller(dp.size, DistributionSize.medium))
+                    {
+                        float currentDistance = (dp.transform.position - pp.transform.position).sqrMagnitude;
+                        if (currentDistance < minDistance)
+                        {
+                            argminPoint = dp;
+                            minDistance = currentDistance;
+                        }
+                    }
+                }
+            }
+
+            if (!(argminPoint is null)) argminPoint.Upgrade();
+        }
+    }
+
+    private void SpreadDistributionPoint(DistributionPoint distributionPoint)
+    {
+        float minDistance = Mathf.Infinity;
+        DistributionPoint argminPoint = null;
+        foreach (DistributionPoint dp in GetComponentsInChildren<DistributionPoint>())
+        {
+            if (dp != distributionPoint && DistributionPoint.StrictlySmaller(dp.size, distributionPoint.size))
+            {
+                float currentDistance = (dp.transform.position - distributionPoint.transform.position).sqrMagnitude;
+                if (currentDistance < minDistance)
+                {
+                    argminPoint = dp;
+                    minDistance = currentDistance;
+                }
+            }
+        }
+
+        if (!(argminPoint is null)) argminPoint.Upgrade();
+    }
+
+    public static void Spread(DistributionPoint distributionPoint) { Level.level.SpreadDistributionPoint(distributionPoint); }
 
     void Start()
     {

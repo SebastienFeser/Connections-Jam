@@ -43,19 +43,6 @@ public class ProductionPoint : MonoBehaviour
                 }
                 actualTime -= productTimer;
             }
-
-            /*foreach (DistributionPoint element in connections)
-            {
-                if (element.ProductionDemand > 0)
-                {
-                    SendProducts(element);
-                }
-            }
-
-            void SendProducts(DistributionPoint distributionPoint)
-            {
-
-            }*/
         }
     }
 
