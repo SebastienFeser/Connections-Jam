@@ -163,6 +163,7 @@ MonoBehaviour:
   - {fileID: 6993567749787318010}
   - {fileID: 7032445144425631661}
   - {fileID: 6749237489614801116}
+  productGameObject: {fileID: 5983572400691038696, guid: 8712a1b41755d114b9f3cf7763509735, type: 3}
 --- !u!61 &6229964485128175415
 BoxCollider2D:
   m_ObjectHideFlags: 0

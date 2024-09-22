@@ -14,6 +14,7 @@ public class ProductionPoint : MonoBehaviour
     [SerializeField] GameObject productGameObject;
     GameObject[] productsAroundPP = new GameObject[8];
     List<DistributionPoint> waitingDemand = new List<DistributionPoint>();
+    Gang gang;
 
     public Gang owner;
 
@@ -55,6 +56,11 @@ public class ProductionPoint : MonoBehaviour
 
     public bool IsConnectedTo(DistributionPoint distributionPoint) { return connections.Contains(distributionPoint); }
     public void AddConnection(DistributionPoint distributionPoint) { connections.Add(distributionPoint); }
+
+    public void SetGang(Gang newGang)
+    {
+        gang = newGang;
+    }
 
     public void SpawnProduct()
     {
